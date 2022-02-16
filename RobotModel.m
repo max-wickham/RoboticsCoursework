@@ -1,7 +1,7 @@
 classdef RobotModel
     properties
         kinematic_model = KinematicModel()
-        angle_scalar = [1,1,1,1]
+        angle_scalar = [1,-1,1,1]
         angle_offset = [0,0,0,0]
         max_servo_val = 2000
         pos_scalar = [1,-1,1]
