@@ -2,7 +2,7 @@ classdef RobotController
     properties
         robot_model = RobotModel()
 
-        port_num = ''
+        port_num = 0
         lib_name = ''
         max_angle_error = 3
 
@@ -12,7 +12,7 @@ classdef RobotController
         ADDR_PRO_GOAL_POSITION       = 116; 
         ADDR_PRO_PRESENT_POSITION    = 132; 
         ADDR_PRO_OPERATING_MODE      = 11;
-        PROFILE_VELOCITY             = 112;
+        ADDR_PROFILE_VELOCITY            = 112;
 
         %% ---- Other Settings ---- %%
 
@@ -27,7 +27,7 @@ classdef RobotController
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
         BAUDRATE                    = 1000000;
-        DEVICENAME                  = 'COM4';       % Check which port is being used on your controller
+        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -41,15 +41,19 @@ classdef RobotController
         COMM_SUCCESS                = 0;            % Communication Success result value
         COMM_TX_FAIL                = -1001;        % Communication Tx Failed
 
+        SPEED_VAL                   = 5000;
         %% ------------------ %%
     end
     methods
+        function move_servo(obj, index, val)
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_GOAL_POSITION, val);   
+        end
         function move_to_positions(obj, positions)
             % Iterate through psoition, create servo vals and move to each one
             len =length(positions);
             for i=1:len
                 % check the current position if the change in position is too large create an array of smaller moves
-                servo_vals = obj.robot_model.servo_vals(position(i)(1:3),position(i)(4));
+                servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
                 obj.move_servo_to_val(servo_vals);
             end
         end
@@ -83,11 +87,11 @@ classdef RobotController
             write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID5, obj.ADDR_PRO_OPERATING_MODE, 3);
 
             % set actuator movement speed
-            write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID1, obj.PROFILE_VELOCITY, 3);
-            write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID2, obj.PROFILE_VELOCITY, 3);
-            write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID3, obj.PROFILE_VELOCITY, 3);
-            write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID4, obj.PROFILE_VELOCITY, 3);
-            write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID5, obj.PROFILE_VELOCITY, 3);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID1, obj.ADDR_PROFILE_VELOCITY, obj.SPEED_VAL);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID2, obj.ADDR_PROFILE_VELOCITY, obj.SPEED_VAL);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID3, obj.ADDR_PROFILE_VELOCITY, obj.SPEED_VAL);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID4, obj.ADDR_PROFILE_VELOCITY, obj.SPEED_VAL);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID5, obj.ADDR_PROFILE_VELOCITY, obj.SPEED_VAL);
 
             % enable dynamixle torque
             write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID1, obj.ADDR_PRO_TORQUE_ENABLE, 1);
@@ -113,7 +117,7 @@ classdef RobotController
             closePort(obj.port_num);
             fprintf('Port Closed \n');
             % Unload Library
-            unloadlibrary(obj.lib_name);
+            %unloadlibrary(obj.lib_name);
         end
 
         function init(obj)
