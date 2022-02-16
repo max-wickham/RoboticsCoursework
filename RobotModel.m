@@ -4,6 +4,9 @@ classdef RobotModel
         angle_scalar = [1,-1,1,1]
         angle_offset = [0,0,0,0]
         max_servo_val = 2000
+        angle_scalar = [1,1,1,1]
+        angle_offset = [0,0.18356,0,0] %radians
+        max_servo_val = 4096 %val for 2pi radians
         pos_scalar = [1,-1,1]
         pos_offset = [0,0,0]
     end
@@ -19,7 +22,7 @@ classdef RobotModel
             new_servo_vals = [0,0,0,0];
             len =length(new_servo_vals);
             for i=1:len
-                new_servo_vals(i) = angles(i) * obj.angle_scalar(i) + obj.angle_offset(i);
+                new_servo_vals(i) = angles(i) * (obj.angle_scalar(i) * obj.max_servo_val / (2*pi)) + obj.angle_offset(i) * obj.max_servo_val / (2*pi);
             end
             r = new_servo_vals;
         end

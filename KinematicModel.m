@@ -5,6 +5,11 @@ classdef KinematicModel
         A3 = 5
         D0 = 10
         Up = false
+        A1 = 13
+        A2 = 12.4
+        A3 = 12.6
+        D0 = 7.7
+        Up = true
     end
     methods
         function r = angles(obj, x , y, z, theta)
