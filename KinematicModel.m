@@ -1,10 +1,5 @@
 classdef KinematicModel
     properties
-        A1 = 20
-        A2 = 20
-        A3 = 5
-        D0 = 10
-        Up = false
         A1 = 13
         A2 = 12.4
         A3 = 12.6

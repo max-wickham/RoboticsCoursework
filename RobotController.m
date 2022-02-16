@@ -53,7 +53,7 @@ classdef RobotController
             len =length(positions);
             for i=1:len
                 % check the current position if the change in position is too large create an array of smaller moves
-                servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
+                servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
                 obj.move_servo_to_val(servo_vals);
             end
         end
