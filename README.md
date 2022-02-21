@@ -54,7 +54,7 @@ week10 (21st Mar): *Demo*
   - Task 4 –Own Task –15marks
  Total -75marks
  
- - Video Demo 
+- Video Demo 
   - Task 1 –8marks
   - Task 2 –16marks
   - Task 3 –16marks
@@ -62,10 +62,10 @@ week10 (21st Mar): *Demo*
   - Video Quality –5marks
  Total -65marks
  
- - Live Demo
-  Task 2 –Pick and Place –20marks
-  Task 3 –Drawing –20marks
-  Task 4 –Own Task –20marks
+- Live Demo
+  - Task 2 –Pick and Place –20marks
+  - Task 3 –Drawing –20marks
+  - Task 4 –Own Task –20marks
  Total -60Marks
  
 - For each live demo we evaluate:
