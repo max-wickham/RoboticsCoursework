@@ -6,7 +6,7 @@ submission deadline: 14th March
 live demo: week of 21st Mar
 
 week6 (21st Feb): (lab)
-  to do:
+  > to do:
   - finish simulator (squares in all four axis)
   - trajectory computation (straight line with variable speed) 
   - current position computation
@@ -14,20 +14,20 @@ week6 (21st Feb): (lab)
   - create functions for each movement type for task 2 (cubes)
   - write down task 4 ideas
   - design gripper for task 3 and print
-  in the lab:
+  > in the lab:
   - more test on IK and precision
   - measurements on cubes and test on task 2 (and 3)
   - ask Spiers about task 4 ideas
-  goals:
+  > goals:
   - finishing task1 suimulation
   - finish task2 cubes
   - try and test task 3 drawing
  
 week7 (28th Feb): (extra session)
-  to do:
+  > to do:
   - decide task 4 and implement
   - print more for task 3/4
-  in the lab:
+  > in the lab:
   - (more testing task 3 and gripper)
   - tests on task 4
   - performance evaluation (speed, smootheness, novelty etc)
