@@ -1,3 +1,12 @@
+%%%%%%%% setup 
+% robotController = RobotController()
+% robotController.init()
+%%%%%%%% usage 
+% robotController.move_servo(index, val)
+% robotController.move_to_positions(positions)
+% position = robotController.get_current_position()
+%%%%%%%% clean up
+% robotController.close()
 classdef RobotController
     properties
         robot_model = RobotModel()
@@ -45,17 +54,33 @@ classdef RobotController
         %% ------------------ %%
     end
     methods
+
         function move_servo(obj, index, val)
+            % sends a specific value directly to a servo, between 0 and 4096, should be used for controlling the gripper
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_GOAL_POSITION, val);   
+            while 1
+                dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_PRESENT_POSITION); 
+                not_correct_position = abs(dxl_present_position - val) > obj.max_angle_error;
+                if not_correct_position
+                    break;
+                end
+            end
         end
+
         function move_to_positions(obj, positions)
-            % Iterate through psoition, create servo vals and move to each one
+            % moves the arm gripper to a series of positions,
+            % positions should be an array of arrays that each have 4 values, the x y z oordinate
+            % and then the angle in radians of the gripper
             len =length(positions);
             for i=1:len
-                % check the current position if the change in position is too large create an array of smaller moves
                 servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
                 obj.move_servo_to_val(servo_vals);
             end
+        end
+
+        function r = get_current_position(obj)
+            % returns the current position and gripper angle
+            r = [0,0,0,0]
         end
 
         function move_servo_to_val(obj, servo_vals)
@@ -64,17 +89,20 @@ classdef RobotController
                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
             end
             while 1
+                test = false
                 len =length(servo_vals);
                 for i=1:len
                     % check if not at correct position and if so continue
                     dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                     correct_position = abs(dxl_present_position - servo_vals(i)) < obj.max_angle_error;
                     if correct_position == false
-                        continue
+                        test = true
                     end
-                    write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
+                    %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
                 end 
-                break
+                if test == true
+                    break
+                end
             end
         end
 
@@ -168,6 +196,8 @@ classdef RobotController
                 input('Press any key to terminate...\n');
                 return;
             end
+
+            obj.control_mode_setup()
 
         end
     end
