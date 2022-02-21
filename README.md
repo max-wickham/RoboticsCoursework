@@ -42,23 +42,24 @@ week9 (14th Mar): *Deadline Report and Video* (extra session?)
   - get ready for live demo
   
 week10 (21st Mar): *Demo*
+  - demo simulation
 
 
 --marking criteria--
 
 - Report
-  Task 1 –Modelling –40marks
-  Task 2 –Pick and Place –10marks
-  Task 3 –Drawing –10marks
-  Task 4 –Own Task –15marks
+  - Task 1 –Modelling –40marks
+  - Task 2 –Pick and Place –10marks
+  - Task 3 –Drawing –10marks
+  - Task 4 –Own Task –15marks
  Total -75marks
  
  - Video Demo 
-  Task 1 –8marks
-  Task 2 –16marks
-  Task 3 –16marks
-  Task 4 –20marks
-  Video Quality –5marks
+  - Task 1 –8marks
+  - Task 2 –16marks
+  - Task 3 –16marks
+  - Task 4 –20marks
+  - Video Quality –5marks
  Total -65marks
  
  - Live Demo
@@ -68,10 +69,10 @@ week10 (21st Mar): *Demo*
  Total -60Marks
  
 - For each live demo we evaluate:
-  Accuracy –7marks (completing the given task)
-  Smoothness/ Method –6marks (trajectories chosen, smooth motion)
-  Time Taken –7marks (Task 2 & 3)
-  Novelty and Style –7marks (Task 4)
+  - Accuracy –7marks (completing the given task)
+  - Smoothness/ Method –6marks (trajectories chosen, smooth motion)
+  - Time Taken –7marks (Task 2 & 3)
+  - Novelty and Style –7marks (Task 4)
  Sub-total –20 Marks
  
  TOTAL MARKS= 200
