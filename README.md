@@ -8,7 +8,7 @@ live demo: week of 21st Mar
 week6 (21st Feb): (lab)
   > to do:
   - finish simulator (squares in all four axis)
-  - trajectory computation (straight line with variable speed) 
+    trajectory computation (straight line with variable speed) 
   - current position computation
   - ask input format of task 3 (drawing) and make compatible program
   - create functions for each movement type for task 2 (cubes)
