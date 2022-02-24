@@ -13,7 +13,7 @@ classdef RobotController
 
         port_num = 0
         lib_name = ''
-        max_angle_error = 3
+        max_angle_error = 50
 
         %% ---- Control Table Addresses ---- %%
 
@@ -54,14 +54,26 @@ classdef RobotController
         %% ------------------ %%
     end
     methods
-
+        
+        function set_speed_arm(obj,speed, acc)
+            for i=1:4
+                write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 10, 4);
+                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 112, speed);
+                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 108, acc);
+            end
+        end
+        function set_speed_gripper(obj,speed)
+            write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 10, 0);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 112, speed);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 1);
+        end
         function move_servo(obj, index, val)
             % sends a specific value directly to a servo, between 0 and 4096, should be used for controlling the gripper
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_GOAL_POSITION, val);   
             while 1
                 dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_PRESENT_POSITION); 
                 not_correct_position = abs(dxl_present_position - val) > obj.max_angle_error;
-                if not_correct_position
+                if not_correct_position == false
                     break;
                 end
             end
@@ -71,8 +83,8 @@ classdef RobotController
             % moves the arm gripper to a series of positions,
             % positions should be an array of arrays that each have 4 values, the x y z oordinate
             % and then the angle in radians of the gripper
-            len =length(positions);
-            for i=1:len
+            len =size(positions);
+            for i=1:len(1)
                 servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
                 obj.move_servo_to_val(servo_vals);
             end
@@ -100,7 +112,7 @@ classdef RobotController
                     end
                     %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
                 end 
-                if test == true
+                if test == false
                     break
                 end
             end

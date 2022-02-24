@@ -4,7 +4,7 @@ classdef RobotModel
         angle_scalar = [1,-1,-1,-1]
         angle_offset = [0,-0.18356-pi/2,pi/2+0.18356,pi] %radians
         max_servo_val = 4096 %val for 2pi radians
-        pos_scalar = [1,-1,1]
+        pos_scalar = [-1,-1,1]
         pos_offset = [0,0,0]
     end
     methods
