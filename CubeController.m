@@ -9,6 +9,14 @@ classdef CubeController
         down_horizontal_height = 0
     end
     methods
+        function setup_controller(obj)
+            obj.robotController.init();
+            obj.robotController.control_mode_setup();
+        end
+
+        function close_controller(obj)
+            obj.robotController.close();
+        end
         function set_arm_speed(obj, speed, acc)
             robotController.set_arm_speed(speed,acc)
         end
@@ -33,11 +41,11 @@ classdef CubeController
             obj.go_to_pos(theta,distance,0,obj.down_horizontal_height)
         end
 
-        function open(obj)
+        function open_gripper(obj)
             robotController.move_servo(5,obj.open_servo_val);
         end
 
-        function close(obj)
+        function close_gripper(obj)
             robotController.move_servo(5,obj.closed_servo_val);
         end
     end

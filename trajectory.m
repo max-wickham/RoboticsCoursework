@@ -2,10 +2,13 @@
 %and split the trajectory in smaller unevenly-distributed steps 
  
 function pos_array = trajectory(current_pos, final_pos)
-
+    
+    angle = final_pos(4);
+    current_pos = current_pos(1:3);
+    final_pos = final_pos(1:3);
     delta_pos = final_pos-current_pos;
-    N = round(norm(distance))
-    degree = 1
+    N = round(norm(delta_pos));
+    degree = 1;
     if mod(N,2) == 1
         N = N+1;
     end
@@ -13,11 +16,12 @@ function pos_array = trajectory(current_pos, final_pos)
     trans = linspace(-1, 1, N);
     trans = abs(trans.^(-degree));
     trans = trans./sum(trans, 'all');
-
+    trans = transpose(cumsum(trans)) * delta_pos;
     positions = current_pos + trans;
-    pos_array = positions
+    angle_column = zeros(N,1) + angle;
+    pos_array = [positions angle_column];
 
-    % %N = 10; %use even number, could be adjusted depending on the distance
+    %N = 10; %use even number, could be adjusted depending on the distance
     % degree = 1; %find optimal distribution based on robot tests
     % distance = final_pos-current_pos;
     
