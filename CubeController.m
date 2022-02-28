@@ -1,3 +1,8 @@
+% To use run these steps
+% 1. cubeController = CubeController()
+% 2. cubeController.setup_controller()
+% 3. Run any of the movement functions 
+% 4. cubeController.close_controller()
 classdef CubeController
     properties
         robotController = RobotController()
@@ -17,6 +22,7 @@ classdef CubeController
         function close_controller(obj)
             obj.robotController.close();
         end
+
         function set_arm_speed(obj, speed, acc)
             robotController.set_arm_speed(speed,acc)
         end
@@ -51,14 +57,9 @@ classdef CubeController
     end
 
     methods (Access = private)
-        function pos = polar_to_cartesian(obj, theta, distance)
-            x = sin(theta)*distance
-            y = cos(theta)*distance
-            pos = [x,y]
-        end
 
         function go_to_pos(obj, theta, postiion, angle, height)
-            pos = obj.polar_to_cartesian(theta,distance)
+            pos = polar_to_cartesian(theta,distance)
             end_pos = [pos[1],pos[2],height,angle]
             obj.robotController.move_to_positions([end_pos])
         end

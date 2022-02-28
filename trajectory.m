@@ -12,7 +12,6 @@ function pos_array = trajectory(current_pos, final_pos)
     if mod(N,2) == 1
         N = N+1;
     end
-
     trans = linspace(-1, 1, N);
     trans = abs(trans.^(-degree));
     trans = trans./sum(trans, 'all');

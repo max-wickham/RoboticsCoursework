@@ -22,4 +22,6 @@
 %model.servo_vals([20,0,20],0)
 %controller.close();
 
-trajectory([10,10,10, pi/2],[10,0,10, pi/2])
+%trajectory([10,10,10, pi/2],[10,0,10, pi/2])
+
+polar_to_cartesian([0,0.1,0.2], 5) + [0, 2]
