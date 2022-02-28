@@ -65,3 +65,19 @@ classdef CubeController
         end
     end
 end
+
+%%%%%%%%%%%%%%% Example usage to rotate a cube %%%%%%%%%%%%%%%
+
+% cubeController = CubeController()
+% cubeController.setup_controller()
+
+% cubeController.up_vertical_polar(1.4, 15) 
+% cubeController.open_gripper()
+% cubeController.down_vertical_polar(1.4, 15)
+% cubeController.close_gripper()
+% cubeController.up_vertical_polar(1.4, 15)
+% cubeController.up_horizontal_polar(1.4, 15)
+% cubeController.down_horizontal_polar(1.4, 15)
+% cubeController.open_gripper()
+
+% cubeController.close_controller()

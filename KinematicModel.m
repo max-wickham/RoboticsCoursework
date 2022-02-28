@@ -24,9 +24,6 @@ classdef KinematicModel
             b = z - S123*obj.A3 - obj.D0; 
             C2 = ( (a^2+b^2) - (obj.A1^2 + obj.A2^2));
             C2 = C2 / (2*obj.A1*obj.A2);
-            %S1 = (b*(obj.A1+obj.A2*C2) - a*obj.A2*(1-C2^2)^0.5);
-            %S1 = S1 / (a^2+b^2);
-            %theta1 = asin(S1);
             theta2 = acos(C2);
             theta1 = atan(b/a) - atan(obj.A2*sin(theta2) / (obj.A1 + obj.A2*C2));
             if obj.Up == true
