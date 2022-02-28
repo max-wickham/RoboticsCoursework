@@ -7,6 +7,8 @@ classdef CubeController
         lift_height = 0
         lower_height = 0
         steps_per_cm_circle = 1
+        pen_pos_upper = [0,0,0]
+        pen_pos_lower = [0,0,0]
     end
 
     methods
@@ -24,6 +26,11 @@ classdef CubeController
             % Lower to pen
             % Grab pen
             % Lift pen
+            robotController.move_to_positions([[pen_pos_upper grip_angle]])
+            robotController.move_servo(5,obj.open_value);
+            robotController.move_to_positions([[pen_pos_lower grip_angle]])
+            robotController.move_servo(5,obj.close_value);
+            robotController.move_to_positions([[pen_pos_upper grip_angle]])
         end
 
         function draw_line(obj, start_pos, end_pos) % start_pos and end_pos are 2 dimensional
