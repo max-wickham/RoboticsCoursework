@@ -111,8 +111,8 @@ classdef CubeController
         for i=1:turn
             open_gripper(obj);
             obj.move_up(robotController.get_current_position());
-            robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
-            robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, gripper_final_angle]]);
+            obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, gripper_final_angle]]);
             obj.close_gripper();
             robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
             if flip_angle == 180 && turn == 1
