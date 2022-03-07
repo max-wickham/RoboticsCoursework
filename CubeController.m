@@ -13,10 +13,9 @@ classdef CubeController
         robotController = RobotController()
         open_servo_val = 2000
         closed_servo_val = 2430
-%         up_vertical_height = 0
-%         down_vertical_height = 0
-%         up_horizontal_height = 0
-%         down_horizontal_height = 0
+        grip_inwards = pi;
+        grip_outwards = 0;
+        grip_vertical = -pi/2;
         UP_level = 0
         DOWN_level = 0
     end
@@ -37,22 +36,19 @@ classdef CubeController
         function set_gripper_speed(obj,speed)
             robotController.set_speed_gripper(speed)
         end
-
-%         function up_vertical_polar(obj, theta, distance)
-%             obj.go_to_pos(theta,distance,-pi/2,obj.up_vertical_height)
-%         end
-% 
-%         function down_vertical_polar(obj, theta, distance)
-%             obj.go_to_pos(theta,distance,-pi/2,obj.down_vertical_height)
-%         end
-% 
-%         function up_horizontal_polar(obj, theta, distance)
-%             obj.go_to_pos(theta,distance,0,obj.up_horizontal_height)
-%         end
-% 
-%         function down_horizontal_polar(obj, theta, distance)
-%             obj.go_to_pos(theta,distance,0,obj.down_horizontal_height)
-%         end
+        
+        %given position it returns turning dir=(pos dir allowed, neg dir allowed)
+        function dir = turnability(pos)
+        %pos is x,y coords
+            if norm(pos) < min_range
+                dir = [false, true]; %neg allowed
+            elseif norm(pos) > max_range
+                dir = [true, false]; %pos allowed
+            else 
+                dir = [true, true]; %in range
+            end
+        end
+        
         function move_up(obj, pos)
             %pos array of 4 coords
             pos(3)= UP_level;
@@ -70,10 +66,72 @@ classdef CubeController
         function close_gripper(obj)
             robotController.move_servo(5,obj.closed_servo_val);
         end
+        
+        %*******************FLIP ON THE SPOT
+        function flip_on_the_spot(obj,position, flip_angle)
+        %**INPUT**
+        %pos is x,y coords
+        %flip_angle is amount of flip requested in outwards direction from top
+        % 0 deg is red face up, no flip
+        % allowed values for flip = 0, 90,180,270
+        dir = turnability(position);
+        %********compute flipping mode
+        %turn = flip_angle/90;
+        if flip_angle < 180 %neg direction
+            if dir(2) % neg allowed
+                gripper_final_angle = obj.grip_inwards;
+                turn = 1;
+            else
+                gripper_final_angle = obj.grip_outwards;
+                turn = 3;
+            end
+        elseif flip_angle == 180 %180°
+            if dir(2) && dir(1) % neg allowed
+                gripper_final_angle = obj.grip_inwards;
+                turn = 1;
+            elseif dir(2)
+                gripper_final_angle = obj.grip_inwards;
+                turn = 2;
+            else
+                gripper_final_angle = obj.grip_outwards;
+                turn = 2;   
+            end
+        elseif flip_angle > 180 %pos direction
+            if dir(1) % neg allowed
+                gripper_final_angle = obj.grip_outwards;
+                turn = 1;
+            else
+                gripper_final_angle = obj.grip_inwards;
+                turn = 3;
+            end
+        end
+        %********actual flipping
+        %open and go up, turn gripper, down, close, go up, turn, down, open,
+        %up
+        for i=1:turn
+            open_gripper(obj);
+            obj.move_up(robotController.get_current_position());
+            robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, gripper_final_angle]]);
+            obj.close_gripper();
+            robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            if flip_angle == 180 && turn == 1
+                robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_outwards]]);
+                robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
+                robotController.open_gripper();
+                robotController.move_to_positions([[position(1), position(2), obj.UP_level, obj.grip_outwards]]);
+            else
+                robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_vertical]]);
+                robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
+                robotController.open_gripper();
+                robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_outwards]]);
+            end
+        end 
+    end 
     end
 
     methods (Access = private)
-        function go_to_pos(obj, theta, postiion, angle, height)
+        function go_to_pos(obj, theta, position, angle, height)
             pos = polar_to_cartesian(theta,distance)
             end_pos = [pos[1],pos[2],height,angle]
             obj.robotController.move_to_positions([end_pos])
