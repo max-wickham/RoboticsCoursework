@@ -24,6 +24,9 @@ week6 (21st Feb): (lab)
   - try and test task 3 drawing
  
 week7 (28th Feb): (extra session)
+//
+
+week8 (7th Mar): (lab)
   > to do:
   - decide task 4 and implement
   - print more for task 3/4
@@ -31,17 +34,15 @@ week7 (28th Feb): (extra session)
   - (more testing task 3 and gripper)
   - tests on task 4
   - performance evaluation (speed, smootheness, novelty etc)
-
-week8 (7th Mar): (lab)
+  
+week9 (14th Mar): 
   - Video demo (quality)
   - Report
   - finalise task 4
-  
-week9 (14th Mar): *Deadline Report and Video* (extra session?)
+   
+week10 (21st Mar): *Demo* + *Deadline Report and Video* (extra session?)
   - submit video and report
   - get ready for live demo
-  
-week10 (21st Mar): *Demo*
   - demo simulation
 
 
