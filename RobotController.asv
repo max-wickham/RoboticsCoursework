@@ -90,11 +90,6 @@ classdef RobotController
             % moves the arm gripper to a series of positions,
             % positions should be an array of arrays that each have 4 values, the x y z oordinate
             % and then the angle in radians of the gripper
-            
-            % !! 
-            % set speed or time mode depending on positions length
-            % !!
-            
             len =size(positions);
             for i=1:len(1)
                 servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))

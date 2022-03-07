@@ -1,3 +1,8 @@
+
+%TO DO:
+%up and down level, current_pos
+
+
 % To use run these steps
 % 1. cubeController = CubeController()
 % 2. cubeController.setup_controller()
@@ -8,10 +13,12 @@ classdef CubeController
         robotController = RobotController()
         open_servo_val = 2000
         closed_servo_val = 2430
-        up_vertical_height = 0
-        down_vertical_height = 0
-        up_horizontal_height = 0
-        down_horizontal_height = 0
+%         up_vertical_height = 0
+%         down_vertical_height = 0
+%         up_horizontal_height = 0
+%         down_horizontal_height = 0
+        UP_level = 0
+        DOWN_level = 0
     end
     methods
         function setup_controller(obj)
@@ -31,22 +38,27 @@ classdef CubeController
             robotController.set_speed_gripper(speed)
         end
 
-        function up_vertical_polar(obj, theta, distance)
-            obj.go_to_pos(theta,distance,-pi/2,obj.up_vertical_height)
+%         function up_vertical_polar(obj, theta, distance)
+%             obj.go_to_pos(theta,distance,-pi/2,obj.up_vertical_height)
+%         end
+% 
+%         function down_vertical_polar(obj, theta, distance)
+%             obj.go_to_pos(theta,distance,-pi/2,obj.down_vertical_height)
+%         end
+% 
+%         function up_horizontal_polar(obj, theta, distance)
+%             obj.go_to_pos(theta,distance,0,obj.up_horizontal_height)
+%         end
+% 
+%         function down_horizontal_polar(obj, theta, distance)
+%             obj.go_to_pos(theta,distance,0,obj.down_horizontal_height)
+%         end
+        function move_up()
+            robotController.current_pos(3) = UP_level;
         end
-
-        function down_vertical_polar(obj, theta, distance)
-            obj.go_to_pos(theta,distance,-pi/2,obj.down_vertical_height)
+        function move_down()
+            robotController.current_pos(3) = DOWN_level;
         end
-
-        function up_horizontal_polar(obj, theta, distance)
-            obj.go_to_pos(theta,distance,0,obj.up_horizontal_height)
-        end
-
-        function down_horizontal_polar(obj, theta, distance)
-            obj.go_to_pos(theta,distance,0,obj.down_horizontal_height)
-        end
-
         function open_gripper(obj)
             robotController.move_servo(5,obj.open_servo_val);
         end
