@@ -57,7 +57,6 @@ classdef CubeController
     end
 
     methods (Access = private)
-
         function go_to_pos(obj, theta, postiion, angle, height)
             pos = polar_to_cartesian(theta,distance)
             end_pos = [pos[1],pos[2],height,angle]

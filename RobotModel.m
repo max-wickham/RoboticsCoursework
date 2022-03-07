@@ -10,14 +10,14 @@ classdef RobotModel
     methods
 function r = servo_vals(obj, pos, theta)
     % Generate the servo values needded to achieve a given position
-    new_pos=[0,0,0];
-    len =length(new_pos);
+    new_pos = [0,0,0];
+    len = length(new_pos);
     for i=1:len
         new_pos(i) = pos(i) * obj.pos_scalar(i) + obj.pos_offset(i);
     end
     angles = obj.kinematic_model.angles(new_pos(1),new_pos(2),new_pos(3),theta)
     new_servo_vals = [0,0,0,0];
-    len =length(new_servo_vals);
+    len = length(new_servo_vals);
     for i=1:len
         new_servo_vals(i) = angles(i) * (obj.angle_scalar(i) * obj.max_servo_val / (2*pi)) + obj.angle_offset(i) * obj.max_servo_val / (2*pi) %convert from rad to servo val
         new_servo_vals(i) = mod((new_servo_vals(i)+4096), 4096) %remove neg
