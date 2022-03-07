@@ -79,43 +79,43 @@ end
 %*******************FLIP ON THE SPOT
     function flip_on_the_spot(position, flip_angle)
         %**PARAMETERS**
-        grip_inwards = -pi/2;
-        grip_outwards = pi/2;
-        grip_vertical = 0;
+        grip_inwards = pi;%-pi/2;
+        grip_outwards = 0;%pi/2;
+        grip_vertical = -pi/2;
         %**INPUT**
         %flip_angle is amount of flip requested in outwards direction from top
-        % 0deg is red face up, no flip
+        % 0 deg is red face up, no flip
         % allowed values for flip = 0, 90,180,270
         dir = turnability(position)
         %********compute flipping mode
         %turn = flip_angle/90;
         if flip_angle < 180 %neg direction
-                if dir(2) % neg allowed
-                    gripper_final_angle = grip_inwards;
-                    turn = 1;
-                else
-                    gripper_final_angle = grip_outwards;
-                    turn = 3;
-                end
+            if dir(2) % neg allowed
+                gripper_final_angle = grip_inwards;
+                turn = 1;
+            else
+                gripper_final_angle = grip_outwards;
+                turn = 3;
+            end
         elseif flip_angle == 180 %180°
-                if dir(2) && dir(1) % neg allowed
-                    gripper_final_angle = grip_inwards;
-                    turn = 1;
-                elseif dir(2)
-                    gripper_final_angle = grip_inwards;
-                    turn = 2;
-                else
-                    gripper_final_angle = grip_outwards;
-                    turn = 2;   
-                end
+            if dir(2) && dir(1) % neg allowed
+                gripper_final_angle = grip_inwards;
+                turn = 1;
+            elseif dir(2)
+                gripper_final_angle = grip_inwards;
+                turn = 2;
+            else
+                gripper_final_angle = grip_outwards;
+                turn = 2;   
+            end
         elseif flip_angle > 180 %pos direction
-                if dir(1) % neg allowed
-                    gripper_final_angle = grip_outwards;
-                    turn = 1;
-                else
-                    gripper_final_angle = grip_inwards;
-                    turn = 3;
-                end
+            if dir(1) % neg allowed
+                gripper_final_angle = grip_outwards;
+                turn = 1;
+            else
+                gripper_final_angle = grip_inwards;
+                turn = 3;
+            end
         end
         %********actual flipping
         %open and go up, turn gripper, down, close, go up, turn, down, open,
