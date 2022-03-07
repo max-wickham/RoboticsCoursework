@@ -116,15 +116,15 @@ classdef CubeController
             obj.close_gripper();
             robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
             if flip_angle == 180 && turn == 1
-                robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_outwards]]);
-                robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
-                robotController.open_gripper();
-                robotController.move_to_positions([[position(1), position(2), obj.UP_level, obj.grip_outwards]]);
+                obj.robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_outwards]]);
+                obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
+                obj.robotController.open_gripper();
+                obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, obj.grip_outwards]]);
             else
-                robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_vertical]]);
-                robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
-                robotController.open_gripper();
-                robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_outwards]]);
+                obj.robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_vertical]]);
+                obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
+                obj.robotController.open_gripper();
+                obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_outwards]]);
             end
         end 
     end 
