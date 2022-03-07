@@ -126,14 +126,14 @@ function move_and_flip(obj, final_pos, flip_angle):
             if current_pos(3) <= cube_height
                 current_pos(3) = obj.up_level;
             end
-           robotController.move_to_position([position(1), position(2), current_pos(3), gripper_final_angle]);
+           robotController.move_to_positions([position(1), position(2), current_pos(3), gripper_final_angle]);
            robotController.move_down();
            robotController.close_gripper();
            robotController.move_up();
            if flip_angle == 180 && turn == 1
-                robotController.move_to_position([position(1), position(2), current_pos(3), gripper_outwards]);
+                robotController.move_to_positions([position(1), position(2), current_pos(3), gripper_outwards]);
            else
-               robotController.move_to_position([position(1), position(2), current_pos(3), gripper_final_angle]);
+               robotController.move_to_positions([position(1), position(2), current_pos(3), gripper_final_angle]);
            end
            robotController.move_down();          
            robotController.opem_gripper();
