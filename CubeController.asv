@@ -53,15 +53,13 @@ classdef CubeController
 %         function down_horizontal_polar(obj, theta, distance)
 %             obj.go_to_pos(theta,distance,0,obj.down_horizontal_height)
 %         end
-        function move_up(obj, pos)
-            %pos array of 4 coords
+        function move_up(o)
+            pos =robotController.get_current_position(); 
             pos(3)= UP_level;
-            robotController.move_to_positions([pos]);
+            
         end
-        function move_down(obj, pos)
-            %pos array of 4 coords
-            pos(3)= DOWN_level;
-            robotController.move_to_positions([pos]);
+        function move_down(obj)
+            robotController.get_current_position(3) = DOWN_level;
         end
         function open_gripper(obj)
             robotController.move_servo(5,obj.open_servo_val);
@@ -73,6 +71,7 @@ classdef CubeController
     end
 
     methods (Access = private)
+
         function go_to_pos(obj, theta, postiion, angle, height)
             pos = polar_to_cartesian(theta,distance)
             end_pos = [pos[1],pos[2],height,angle]
