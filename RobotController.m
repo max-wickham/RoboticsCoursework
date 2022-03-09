@@ -94,17 +94,31 @@ classdef RobotController
             % !! 
             % set speed or time mode depending on positions length
             % !!
-            
-            len =size(positions);
+
+
+            % Try 
+
+            len = size(positions);
+
+            servo_vals = zeros(len(1),1);
             for i=1:len(1)
-                servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
-                obj.move_servo_to_val(servo_vals);
+                servo_vals(i) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
+            end
+                
+            for i=1:len(1)
+                % servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
+                % obj.move_servo_to_val(servo_vals);
+                obj.move_servo_to_val(servo_vals(i));
             end
         end
 
-        function r = get_current_position(obj)
+        function pos = get_current_position(obj)
             % returns the current position and gripper angle
-            r = [0,0,0,0]
+            servo_vals = zeros(4);
+            for i=1:4
+                servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+            end
+            pos = obj.robot_model.current_position(servo_vals);
         end
 
         function move_servo_to_val(obj, servo_vals)
@@ -114,7 +128,7 @@ classdef RobotController
             end
             while 1
                 test = false
-                len =length(servo_vals);
+                len = length(servo_vals);
                 for i=1:len
                     % check if not at correct position and if so continue
                     dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 

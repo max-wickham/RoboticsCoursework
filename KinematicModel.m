@@ -54,6 +54,22 @@ classdef KinematicModel
             pos3 = (matrix0*(matrix05*((matrix1*(p1.' + matrix2*(p2.'+matrix3*p3.'))))+p0.')).';
             r = [pos0,pos1,pos2,pos3];
         end
+
+        function position = forward(obj, theta0, theta1, theta2, theta3)
+            C0 = cos(theta0);
+            C1 = cos(theta1);
+            C12 = cos(theta1+theta2);
+            C123 = cos(theta1+theta2+theta3);
+            S0 = sin(theta0);
+            S1 = sin(theta1);
+            S2 = sin(theta1+theta2);
+            S3 = sin(theta1+theta2+theta3);
+            x = C0*(C123*obj.A3+C12*obj.A2+C1*obj.A1);
+            y = S0*(C123*obj.A3+C12*obj.A2+C1*obj.A1);
+            z = S123*obj.A3+S12*obj.A2+S1*obj.A1 + obj.D0;
+            gripper_angle = theta1+theta2+theta3
+            position = [x,y,z,gripper_angle];
+        end
     end
 end
 
