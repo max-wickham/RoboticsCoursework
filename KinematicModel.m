@@ -2,12 +2,13 @@ classdef KinematicModel
     properties
         A1 = 13
         A2 = 12.4
-        A3 = 12.6
+        A3 = 14.6
         D0 = 7.7
         Up = true
     end
     methods
         function r = angles(obj, x , y, z, theta)
+            obj.A3
             theta123 = theta;
             theta0 = atan2(y,x);
             C0 = cos(theta0);
@@ -62,12 +63,12 @@ classdef KinematicModel
             C123 = cos(theta1+theta2+theta3);
             S0 = sin(theta0);
             S1 = sin(theta1);
-            S2 = sin(theta1+theta2);
-            S3 = sin(theta1+theta2+theta3);
+            S12 = sin(theta1+theta2);
+            S123 = sin(theta1+theta2+theta3);
             x = C0*(C123*obj.A3+C12*obj.A2+C1*obj.A1);
             y = S0*(C123*obj.A3+C12*obj.A2+C1*obj.A1);
             z = S123*obj.A3+S12*obj.A2+S1*obj.A1 + obj.D0;
-            gripper_angle = theta1+theta2+theta3
+            gripper_angle = mod(theta1+theta2+theta3+8*pi, 2*pi)
             position = [x,y,z,gripper_angle];
         end
     end
