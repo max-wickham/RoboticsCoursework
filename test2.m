@@ -1,2 +1,1 @@
-controller = KinematicModel();
-controller.angles(10,10,10,0)
+pos = trajectory_angle([0,0,0,0],[0,0,0,pi])
