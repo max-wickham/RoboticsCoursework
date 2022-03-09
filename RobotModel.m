@@ -27,11 +27,14 @@ classdef RobotModel
 
         function position = current_position(obj, servo_vals)
             % Get the current position given servo vals
-            angles =[0,0,0,0]
+            angles =[0,0,0,0];
             for i=1:4
                 angles(i) = (servo_vals(i) - obj.angle_offset(i) * obj.max_servo_val / (2*pi)) /  (obj.angle_scalar(i) * obj.max_servo_val / (2*pi));
             end
-            position = kinematic_model.forward(angles(1),angles(2),angles(3),angles(4));
+            position = obj.kinematic_model.forward(angles(1),angles(2),angles(3),angles(4));
+            for i=1:3
+                position(i) = position(i)*obj.pos_scalar(i);
+            end
         end
     end
 end
