@@ -100,6 +100,15 @@ classdef RobotController
 
             len = size(positions);
 
+
+            % set speed
+
+            if len == 1
+                obj.set_arm_speedmode(10,10);
+            else
+                obj.set_arm_speed(100,100);
+            end
+
             servo_vals = zeros(len(1),1);
             for i=1:len(1)
                 servo_vals(i) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));

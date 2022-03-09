@@ -110,67 +110,67 @@ end
 %*******************FLIP ON THE SPOT
 function flip_on_the_spot(obj,position, flip_angle)
 
-            %**INPUT**
-            %pos is x,y coords
-            %flip_angle is amount of flip requested in outwards direction from top
-            % 0 deg is red face up, no flip
-            % allowed values for flip = 0, 90,180,270
-            dir = turnability(position);
-            %********compute flipping mode
-            %turn = flip_angle/90;
-            if flip_angle < 180 %neg direction
-                if dir(2) % neg allowed
-                    gripper_final_angle = obj.grip_inwards;
-                    turn = 1;
-                else
-                    gripper_final_angle = obj.grip_outwards;
-                    turn = 3;
-                end
-            elseif flip_angle == 180 %180°
-                if dir(2) && dir(1) % neg allowed
-                    gripper_final_angle = obj.grip_inwards;
-                    turn = 1;
-                elseif dir(2)
-                    gripper_final_angle = obj.grip_inwards;
-                    turn = 2;
-                else
-                    gripper_final_angle = obj.grip_outwards;
-                    turn = 2;   
-                end
-            elseif flip_angle > 180 %pos direction
-                if dir(1) % neg allowed
-                    gripper_final_angle = obj.grip_outwards;
-                    turn = 1;
-                else
-                    gripper_final_angle = obj.grip_inwards;
-                    turn = 3;
-                end
-            end
-            %********actual flipping
-            %open and go up, turn gripper, down, close, go up, turn, down, open,
-            %up
-            for i=1:turn
-                open_gripper(obj);
-                obj.move_up(obj.robotController.get_current_position());
-                obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
-                obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, gripper_final_angle]]);
-                obj.close_gripper();
-                obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
-                if flip_angle == 180 && turn == 1
-                    obj.robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_outwards]]);
-                    obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
-                    obj.open_gripper();
-                    obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, obj.grip_outwards]]);
-                else
-                    obj.robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_vertical]]);
-                    obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
-                    obj.open_gripper();
-                    obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_outwards]]);
-                end
-            end 
-        end 
+    %**INPUT**
+    %pos is x,y coords
+    %flip_angle is amount of flip requested in outwards direction from top
+    % 0 deg is red face up, no flip
+    % allowed values for flip = 0, 90,180,270
+    dir = turnability(position);
+    %********compute flipping mode
+    %turn = flip_angle/90;
+    if flip_angle < 180 %neg direction
+        if dir(2) % neg allowed
+            gripper_final_angle = obj.grip_inwards;
+            turn = 1;
+        else
+            gripper_final_angle = obj.grip_outwards;
+            turn = 3;
+        end
+    elseif flip_angle == 180 %180°
+        if dir(2) && dir(1) % neg allowed
+            gripper_final_angle = obj.grip_inwards;
+            turn = 1;
+        elseif dir(2)
+            gripper_final_angle = obj.grip_inwards;
+            turn = 2;
+        else
+            gripper_final_angle = obj.grip_outwards;
+            turn = 2;   
+        end
+    elseif flip_angle > 180 %pos direction
+        if dir(1) % neg allowed
+            gripper_final_angle = obj.grip_outwards;
+            turn = 1;
+        else
+            gripper_final_angle = obj.grip_inwards;
+            turn = 3;
+        end
+    end
+    %********actual flipping
+    %open and go up, turn gripper, down, close, go up, turn, down, open,
+    %up
+    for i=1:turn
+        open_gripper(obj);
+        obj.move_up(obj.robotController.get_current_position());
+        obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+        obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, gripper_final_angle]]);
+        obj.close_gripper();
+        obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+        if flip_angle == 180 && turn == 1
+            obj.robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_outwards]]);
+            obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
+            obj.open_gripper();
+            obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, obj.grip_outwards]]);
+        else
+            obj.robotController.move_to_positions([[position(1), position(2), current_pos(3), obj.grip_vertical]]);
+            obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, obj.grip_outwards]]);
+            obj.open_gripper();
+            obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, gripper_outwards]]);
+        end
+    end 
+end 
 
-    
+
         
         
         
