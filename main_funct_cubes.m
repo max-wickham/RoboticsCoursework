@@ -31,13 +31,13 @@ function main_cube(obj,cube_pos_grid, final_pos_grid, flip_angle)
 
     % compute flip given two positions (and robot range), 
     % append to goal positions
-    gripper_initial_angle, gripper_final_angle, flip_on_spot = set_flip(obj, cube_pos, final_pos, flip_angle);
+    gripper_initial_angle, gripper_final_angle, flip_on_spot = obj.set_flip(cube_pos, final_pos, flip_angle);
 
     % reach cube and move, flip if possible
-    reach_move_flip(obj,cube_pos, final_pos, gripper_initial_angle, gripper_final_angle);
+    obj.reach_move_flip(cube_pos, final_pos, gripper_initial_angle, gripper_final_angle);
 
     % rest of flipping performed on the spot
-    flip_on_the_spot(obj,final_pos, flip_on_spot);
+    obj.flip_on_the_spot(final_pos, flip_on_spot);
   
 end
 
