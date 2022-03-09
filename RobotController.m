@@ -35,8 +35,8 @@ classdef RobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 1000000;
-        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
+        BAUDRATE                    = 115200;
+        DEVICENAME                  = 'COM14';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -62,7 +62,7 @@ classdef RobotController
                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 108, acc);
             end
         end
-        function set_arm_speedmode(obj,speed, acc)
+        function set_arm_speed_mode(obj,speed, acc)
             for i=1:4
                 write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 10, 0);
                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 112, speed);
@@ -104,20 +104,20 @@ classdef RobotController
             % set speed
 
             if len == 1
-                obj.set_arm_speedmode(10,10);
+                obj.set_arm_speed_mode(10,10);
             else
-                obj.set_arm_speed(100,100);
+                obj.set_speed_arm(1000,100);
             end
 
-            servo_vals = zeros(len(1),1);
-            for i=1:len(1)
-                servo_vals(i) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
-            end
+%             servo_vals = zeros(len(1),1);
+%             for i=1:len(1)
+%                 servo_vals(i) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
+%             end
                 
             for i=1:len(1)
-                % servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
-                % obj.move_servo_to_val(servo_vals);
-                obj.move_servo_to_val(servo_vals(i));
+                servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
+                obj.move_servo_to_val(servo_vals);
+%                 obj.move_servo_to_val(servo_vals(i));
             end
         end
 
