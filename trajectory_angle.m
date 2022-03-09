@@ -1,5 +1,6 @@
 function pos_array = trajectory_angle(current_pos, final_pos)
-    N = round((final_pos(4) - current_pos(4)) * 10 / pi);
+    % ---if statement for 0 or 2*pi
+    N = round(norm((final_pos(4) - current_pos(4)) * 20 / pi));
     positions = zeros(N,4);
     angles = linspace(current_pos(4), final_pos(4), N);
     for i = 1:N
