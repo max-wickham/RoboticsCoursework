@@ -173,6 +173,7 @@ classdef CubeController
             dir = obj.turnability(position);
             %********compute flipping mode
             %turn = flip_angle/90;
+            turn = 0;
             if flip_angle < 180 %neg direction
                 if dir(2) % neg allowed
                     gripper_final_angle = obj.grip_inwards;
