@@ -13,7 +13,7 @@ classdef RobotController
 
         port_num = 0
         lib_name = ''
-        max_angle_error = 100
+        max_angle_error = 30%100
 
         %% ---- Control Table Addresses ---- %%
 
