@@ -54,6 +54,12 @@ classdef RobotController
         %% ------------------ %%
     end
     methods
+
+        function readPID(obj)
+            moving_threshold = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 24); 
+            pos_p = read2ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 80); 
+            velocity_p = read2ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 76); 
+        end
         
         function set_speed_arm(obj,speed, acc)
             for i=1:4
