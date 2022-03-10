@@ -2,12 +2,12 @@ classdef CubeController
     properties
         robotController = RobotController()
         open_servo_val = 2000
-        closed_servo_val = 2430
+        closed_servo_val = 2460
         grip_inwards = pi;
         grip_outwards = 0;
         grip_vertical = -pi/2;
-        UP_level = 6
-        DOWN_level = 3
+        UP_level = 5
+        DOWN_level = 3.3 %3
         grid_to_cm = 2.5
         max_range = 20
         min_range = 8

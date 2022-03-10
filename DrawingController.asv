@@ -61,8 +61,8 @@ classdef DrawingController
             % Draw segment
             % Lift back up 
             
-            start_pos = [center(1)+sin(start_angle)*radius, center(2)+cos(start_angle)*radius];
-            end_pos = [center(1)+sin(end_angle)*radius, center(2)+cos(end_angle)*radius];
+            start_pos = [center(1)+cos(start_angle)*radius, center(2)+sin(start_angle)*radius];
+            end_pos = [center(1)+cos(end_angle)*radius, center(2)+sin(end_angle)*radius];
             upper_start_pos = [start_pos(1), start_pos(2), obj.lift_height, obj.grip_angle]
             upper_end_pos = [end_pos(1), end_pos(2), obj.lift_height, obj.grip_angle]
             if start_angle > end_angle
@@ -73,8 +73,8 @@ classdef DrawingController
             angles = linspace(0, 1,num_steps) * (delta_angle / num_steps)
             angles = cumsum(angles) + start_angle
             positions = polar_to_cartesian(angles, radius) + center
-            angle_column = zeros(num_steps,1) + obj.grip_angle;
-            height_column = zeros(num_steps,1) + obj.lower_height;
+            angle_column = zeros(num_step,1) + obj.grip_angle;
+            height_column = zeros(N,1) + obj.lower_height;
             positions = [positions height_column angle_column]
             positions = [[upper_start_pos]; positions; [upper_end_pos]]
             obj.robotController.move_to_positions(positions)
