@@ -21,7 +21,7 @@ try
     %model2.angles(20,0,20,0)
     %model = RobotModel();
     %model.servo_vals([20,0,20],0)
-    controller.readPID();
+    %controller.readPID();
     controller.close();
     catch ME
         controller.close();
