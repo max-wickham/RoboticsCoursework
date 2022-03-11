@@ -7,8 +7,8 @@ controller.setup_controller();
 try
         controller.close_gripper();
         %grab_pen();
-        %controller.draw_line( [14,14], [18,18]);
-        controller.draw_circle_segment( [17,17], 2, 0, (pi-0.1));
+        controller.draw_line( [14,14], [18,18]);
+        controller.draw_circle_segment( [17,17], 2, 0, (2*pi-0.01));
             controller.close_controller();
 
    catch ME

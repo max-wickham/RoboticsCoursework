@@ -10,8 +10,11 @@ controller.setup_controller();
 try
         position = [20.1,0];
         flip_angle = 90;
-        controller.flip_on_the_spot(position, flip_angle)
-    
+        %controller.robotController.setThreshold(3);
+        %controller.flip_on_the_spot(position, flip_angle)
+        controller.main_cube([8,0], [4,0], flip_angle)
+        controller.close_controller();
+
    catch ME
         controller.close_controller();
         ME

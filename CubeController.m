@@ -27,7 +27,7 @@ classdef CubeController
     
             % compute flip given two positions (and robot range), 
             % append to goal positions
-            gripper_initial_angle, gripper_final_angle, flip_on_spot = obj.set_flip(cube_pos, final_pos, flip_angle);
+            [gripper_initial_angle, gripper_final_angle, flip_on_spot] = obj.set_flip(cube_pos, final_pos, flip_angle);
         
             % reach cube and move, flip if possible
             obj.reach_move_flip(cube_pos, final_pos, gripper_initial_angle, gripper_final_angle);
@@ -51,7 +51,7 @@ classdef CubeController
         
         %--------------------------%
                 %retun initial and final gripper orientation plus required flip on spot       
-        function gripper_initial_angle, gripper_final_angle, flip_on_spot = set_flip(obj, cube_pos, final_pos, flip_angle)
+        function [gripper_initial_angle, gripper_final_angle, flip_on_spot] = set_flip(obj, cube_pos, final_pos, flip_angle)
             
             %**INPUTS**
             %pos is x,y coords
@@ -67,6 +67,9 @@ classdef CubeController
             dir_init = obj.turnability(cube_pos);
             dir_final = obj.turnability(final_pos);
             flip_on_spot = 0;
+            
+            gripper_initial_angle =0; 
+            gripper_final_angle = 0; 
             %********compute flipping mode
             %--90deg turn
             if flip_angle < 180 %neg direction
@@ -149,10 +152,10 @@ classdef CubeController
             %move
             up_cube_pos = [final_pos(1), final_pos(2), obj.UP_level, current_pos(4)];
             pos_array = trajectory(current_pos, up_cube_pos);
-            controller.move_to_positions(pos_array);
+            obj.robotController.move_to_positions(pos_array);
             orient_cube_pos = [final_pos(1), final_pos(2), obj.UP_level, gripper_final_angle];
             pos_array = trajectory(up_cube_pos, orient_cube_pos);
-            controller.move_to_positions(pos_array);
+            obj.robotController.move_to_positions(pos_array);
             %down
             obj.robotController.move_to_positions([[final_pos(1), final_pos(2), obj.DOWN_level, gripper_initial_angle]]);
             obj.open_gripper();
@@ -174,7 +177,9 @@ classdef CubeController
             %********compute flipping mode
             %turn = flip_angle/90;
             turn = 0;
-            if flip_angle < 180 %neg direction
+            if flip_angle == 0
+                return
+            elseif flip_angle < 180 %neg direction
                 if dir(2) % neg allowed
                     gripper_final_angle = obj.grip_inwards;
                     turn = 1;

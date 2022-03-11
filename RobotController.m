@@ -13,7 +13,7 @@ classdef RobotController
 
         port_num = 0
         lib_name = ''
-        max_angle_error = 100
+        max_angle_error = 100%100
 
         %% ---- Control Table Addresses ---- %%
 
@@ -56,9 +56,15 @@ classdef RobotController
     methods
 
         function readPID(obj)
-            moving_threshold = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 24); 
-            pos_p = read2ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 80); 
-            velocity_p = read2ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 76); 
+            moving_threshold = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 24); % default  10
+            pos_p = read2ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 80); % 0
+            velocity_p = read2ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(1), 76); % 1920
+        end
+        
+        function setThreshold(obj, threshold)
+            for i = 1:4
+                write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 24, threshold);
+            end
         end
         
         function set_speed_arm(obj,speed, acc)
@@ -218,6 +224,8 @@ classdef RobotController
             else
                 fprintf('Dynamixel has been successfully connected \n');
             end
+            
+            obj.setThreshold(10);
         end
 
         function close(obj)

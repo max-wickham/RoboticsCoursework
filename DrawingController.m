@@ -4,9 +4,9 @@ classdef DrawingController
         grip_angle = 0
         close_value = 2600
         open_value = 2000
-        lift_height = 10
-        lower_height = 8
-        steps_per_cm_circle = 1
+        lift_height = 11
+        lower_height = 8.8
+        steps_per_cm_circle = 8
         pen_pos_upper = [0,0,0]
         pen_pos_lower = [0,0,0]
     end
@@ -82,12 +82,15 @@ classdef DrawingController
 
 
 
-            %angles = linspace(0, 1,num_steps) ;   % uncomment if broken
+            angles = linspace(0, 1,num_steps) ;   % uncomment if broken
             %angles = abs(angles.^(-2)); % remove if breaks 
             %angles = cumsum(angles)
             angles = angles * delta_angle;
             angles = angles + start_angle;
             positions = polar_to_cartesian(angles, radius) + center;
+            figure()
+            pos_t = transpose(positions)
+            plot(pos_t(1, :), pos_t(2, :), 'o')
             angle_column = zeros(num_steps,1) + obj.grip_angle;
             height_column = zeros(num_steps,1) + obj.lower_height;
             positions = [positions height_column angle_column];
