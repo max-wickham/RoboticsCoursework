@@ -2,6 +2,7 @@ classdef DrawingController
     properties
         robotController = RobotController()
         grip_angle = 0
+        pen_pick_angle = -pi/2
         close_value = 2600
         open_value = 2000
         lift_height = 11
@@ -34,28 +35,41 @@ classdef DrawingController
             % Lower to pen
             % Grab pen
             % Lift pen
-            obj.robotController.move_to_positions([[obj.pen_pos_upper, obj.grip_angle]]);
+            % Rotate pen
+            obj.robotController.move_to_positions([[obj.pen_pos_upper obj.pen_pick_angle]]);
             obj.robotController.move_servo(5,obj.open_value);
-            obj.robotController.move_to_positions([[obj.pen_pos_lower, obj.grip_angle]]);
+            obj.robotController.move_to_positions([[obj.pen_pos_lower obj.pen_pick_angle]]);
             obj.robotController.move_servo(5,obj.close_value);
-            obj.robotController.move_to_positions([[obj.pen_pos_upper, obj.grip_angle]]);
+            obj.robotController.move_to_positions([[obj.pen_pos_upper obj.pen_pick_angle]]);
+            obj.robotController.move_to_positions(trajectory_angle([obj.pen_pos_upper obj.pen_pick_angle], [obj.pen_pos_upper obj.grip_angle]));
         end
 
-        function draw_line(obj, start_pos, end_pos) % start_pos and end_pos are 2 dimensional
+        function draw_line(obj, start_pos, end_pos, continuos_start, continuos_end) % start_pos and end_pos are 2 dimensional
             % Move above draw start
             % Move down to draw start
             % Draw line
             % Lift back up 
-            upper_start_pos = [start_pos(1), start_pos(2), obj.lift_height, obj.grip_angle];
             lower_start_pos = [start_pos(1), start_pos(2), obj.lower_height, obj.grip_angle];
             lower_end_pos = [end_pos(1), end_pos(2), obj.lower_height, obj.grip_angle];
-            upper_end_pos = [end_pos(1), end_pos(2), obj.lift_height, obj.grip_angle];
+
+            % adjust start and end height
+            if continuos_start
+                upper_start_pos = [start_pos(1), start_pos(2), obj.lower_height, obj.grip_angle];
+            else
+                upper_start_pos = [start_pos(1), start_pos(2), obj.lift_height, obj.grip_angle];
+            end
+            if continuos_end
+                upper_end_pos = [end_pos(1), end_pos(2), obj.lower_height, obj.grip_angle];
+            else
+                upper_end_pos = [end_pos(1), end_pos(2), obj.lift_height, obj.grip_angle];
+            end
+
             drawing_positions = trajectory(lower_start_pos, lower_end_pos);
             positions = [[upper_start_pos] ; drawing_positions ; [upper_end_pos]];
             obj.robotController.move_to_positions(positions);
         end
 
-        function draw_circle_segment(obj, center, radius, start_angle, end_angle) % center is 2D, start angle and end angle in radians measured clockwise from forward, always draw circle clockwise
+        function draw_circle_segment(obj, center, radius, start_angle, end_angle, continuos_start, continuos_end, clockwise) % center is 2D, start angle and end angle in radians measured clockwise from forward, always draw circle clockwise
             % Move above draw start
             % Move down to draw start
             % Draw segment
@@ -63,8 +77,26 @@ classdef DrawingController
             
             start_pos = [center(1)+cos(start_angle)*radius, center(2)+sin(start_angle)*radius];
             end_pos = [center(1)+cos(end_angle)*radius, center(2)+sin(end_angle)*radius];
-            upper_start_pos = [start_pos(1), start_pos(2), obj.lift_height, obj.grip_angle];
-            upper_end_pos = [end_pos(1), end_pos(2), obj.lift_height, obj.grip_angle];
+
+            if continuos_start
+                upper_start_pos = [start_pos(1), start_pos(2), obj.lower_height, obj.grip_angle];
+            else
+                upper_start_pos = [start_pos(1), start_pos(2), obj.lift_height, obj.grip_angle];
+            end
+
+            if continuos_end
+                upper_end_pos = [end_pos(1), end_pos(2), obj.lower_height, obj.grip_angle];
+            else
+                upper_end_pos = [end_pos(1), end_pos(2), obj.lift_height, obj.grip_angle];
+            end
+
+            if clockwise == false
+                temp = upper_end_pos;
+                upper_end_pos = upper_start_pos;
+                upper_start_pos = temp;
+            end
+
+
             if start_angle > end_angle
                 start_angle = start_angle - 2*pi;
             end
@@ -75,16 +107,13 @@ classdef DrawingController
             if mod(num_steps,2) == 1
                 num_steps = num_steps + 1;
             end
-            angles = linspace(-1,1,num_steps);
-            angles = abs(angles.^(-1));
-            angles = angles./sum(angles,"all");
-            angles = cumsum(angles);
 
+            if clockwise
+                angles = linspace(0, 1, num_steps) ;  
+            else
+                angles = linspace(1, 0, num_steps) ;  
+            end
 
-
-            angles = linspace(0, 1,num_steps) ;   % uncomment if broken
-            %angles = abs(angles.^(-2)); % remove if breaks 
-            %angles = cumsum(angles)
             angles = angles * delta_angle;
             angles = angles + start_angle;
             positions = polar_to_cartesian(angles, radius) + center;

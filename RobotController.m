@@ -121,7 +121,7 @@ classdef RobotController
                 obj.set_speed_arm(1000,10);
             end
 
-            % servo_vals = zeros(len(1),1);
+            % servo_vals = zeros(len(1),4);
             % for i=1:len(1)
             %     servo_vals(i,:) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
             % end
