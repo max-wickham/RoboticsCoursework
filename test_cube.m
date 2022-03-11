@@ -3,6 +3,7 @@
 
 controller = CubeController();
 controller.setup_controller();
+controlller.robotController.set_speed_gripper(speed);
 % controller.move_servo(5,2000);
 % % controller.move_servo(5,2430);
 %%controller.set_speed_arm(1000,100);
@@ -12,7 +13,7 @@ try
         flip_angle = 90;
         %controller.robotController.setThreshold(3);
         %controller.flip_on_the_spot(position, flip_angle)
-        controller.main_cube([8,0], [4,0], flip_angle)
+        controller.main_cube([2,0], [8,0], flip_angle)
         controller.close_controller();
 
    catch ME
