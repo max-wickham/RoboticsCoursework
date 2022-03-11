@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.widgets import Slider, Button
 
-A1,A2,A3,D0 = 13,12.4,12.6,7.7
+A1,A2,A3,D0 = 13,12.4,14.6,7.7
 model = Model(A1,A2,A3,D0)
 coordinates = model.joint_positions(20,5,10,-1*np.pi/2*0)
 
@@ -23,7 +23,7 @@ x_slider = Slider(
     label='X coordinate',
     valmin=0,
     valmax=40,
-    valinit=20,
+    valinit=15,
 )
 y = fig.add_subplot(80,1,73)
 y_slider = Slider(
@@ -39,7 +39,7 @@ z_slider = Slider(
     label='Z coordinate',
     valmin=0,
     valmax=40,
-    valinit=15,
+    valinit=2,
 )
 theta = fig.add_subplot(80,1,80)
 theta_slider = Slider(
@@ -47,7 +47,7 @@ theta_slider = Slider(
     label='Tilt',
     valmin=-90,
     valmax=90,
-    valinit=0,
+    valinit=-1*np.pi/2,
 )
 
 # The function to be called anytime a slider's value changes
@@ -56,8 +56,9 @@ def update(val):
     angles = [x for x in angles]
     fig.text(2,4,'Angle 0 ' + str(angles[0]))
     angles.append(angles[1]+angles[2])
-    print(angles)
+    #print(angles)
     coordinates = model.joint_positions(x_slider.val,y_slider.val,z_slider.val,theta_slider.val/180*np.pi)
+    print(coordinates)
     x = [i[0] for i in coordinates]
     y = [i[1] for i in coordinates]
     z = [i[2] for i in coordinates]
