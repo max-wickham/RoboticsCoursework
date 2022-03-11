@@ -34,8 +34,8 @@ classdef CubeController
             %move to external pos, flip there, then move to final pos
             if(flip_on_spot == flip_angle && flip_on_spot ~= 0) 
                 obj.reach_move_flip(cube_pos, obj.flip_position, obj.gripper_vertical, obj.gripper_vetical);
-                obj.flip_on_the_spot(obj.flip_position, flip_on_spot);
-                obj.reach_move_flip(obj.flip_position, final_pos, obj.gripper_vertical, obj.gripper_vetical);
+                obj.flip_on_the_spot(final_pos, flip_on_spot);
+
             else
                 % reach cube and move, flip if possible
                 obj.reach_move_flip(cube_pos, final_pos, gripper_initial_angle, gripper_final_angle);
