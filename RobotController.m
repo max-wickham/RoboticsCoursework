@@ -116,15 +116,15 @@ classdef RobotController
             % set speed
 
             if len == 1
-                obj.set_arm_speed_mode(100,10);
+                obj.set_arm_speed_mode(100,100);
             else
-                obj.set_speed_arm(1000,100);
+                obj.set_speed_arm(1000,10);
             end
 
-%             servo_vals = zeros(len(1),1);
-%             for i=1:len(1)
-%                 servo_vals(i) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
-%             end
+            % servo_vals = zeros(len(1),4);
+            % for i=1:len(1)
+            %     servo_vals(i,:) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
+            % end
                 
             for i=1:len(1)
                 servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
@@ -143,11 +143,15 @@ classdef RobotController
         end
 
         function move_servo_to_val(obj, servo_vals)
+            start_time = tic;
             len =length(servo_vals);
             for i=1:len
                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
             end
             while 1
+                if toc(start_time) > 1.5
+                    break
+                end
                 test = false
                 len = length(servo_vals);
                 for i=1:len
@@ -163,6 +167,29 @@ classdef RobotController
                     break
                 end
             end
+        end
+
+        function move_servo_to_val_v2(obj, servo_vals)
+            len =length(servo_vals);
+            for i=1:len
+                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
+            end
+            % while 1
+            %     test = false
+            %     len = length(servo_vals);
+            %     for i=1:len
+            %         % check if not at correct position and if so continue
+            %         dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+            %         correct_position = abs(dxl_present_position - servo_vals(i)) < obj.max_angle_error;
+            %         if correct_position == false
+            %             test = true
+            %         end
+            %         %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
+            %     end 
+            %     if test == false
+            %         break
+            %     end
+            % end
         end
 
         function control_mode_setup(obj)
