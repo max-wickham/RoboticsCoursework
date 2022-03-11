@@ -8,7 +8,10 @@ classdef KinematicModel
     end
     methods
         function r = angles(obj, x , y, z, theta)
-            obj.A3
+%             obj.A1 = 13;
+%             obj.A2 = 12.4;
+%             obj.A3 = 14.6;
+%             obj.D0 = 7.7;
             theta123 = theta;
             theta0 = atan2(y,x);
             C0 = cos(theta0);

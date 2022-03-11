@@ -35,8 +35,8 @@ classdef RobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 1000000;
-        DEVICENAME                  = 'COM16';       % Check which port is being used on your controller
+        BAUDRATE                    = 115200;
+        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -149,7 +149,7 @@ classdef RobotController
                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
             end
             while 1
-                if toc(start_time) > 1.5
+                if toc(start_time) > 2.5
                     break
                 end
                 test = false
@@ -232,6 +232,7 @@ classdef RobotController
             % Close port
             closePort(obj.port_num);
             fprintf('Port Closed \n');
+            clear all;
             % Unload Library
             %unloadlibrary(obj.lib_name);
         end

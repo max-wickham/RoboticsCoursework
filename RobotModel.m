@@ -2,7 +2,7 @@ classdef RobotModel
     properties
         kinematic_model = KinematicModel()
         angle_scalar = [1,-1,-1,-1]
-        angle_offset = [0,-0.18356-pi/2,pi/2+0.18356,pi] %radians
+        angle_offset = [0,-0.1756-pi/2,pi/2+0.1756,pi] %radians %-0.18356 0.1756
         max_servo_val = 4096 %val for 2pi radians
         pos_scalar = [-1,-1,1]
         pos_offset = [0,0,0]
