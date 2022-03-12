@@ -23,8 +23,8 @@ class Model:
         C2 = ( (pow(a,2)+pow(b,2)) - (pow(self.A1,2) + pow(self.A2,2)))
         C2 /= (2*self.A1*self.A2)
         theta2 = np.arccos(C2)
-        if self.Up:
-            theta2 *= -1
+        # if self.Up:
+        #     theta2 *= -1
         theta1 = np.arctan(b/a) - np.arctan(self.A2*np.sin(theta2) / (self.A1 + self.A2*C2))
         # S1 = (b*(self.A1+self.A2*C2) - a*self.A2*pow((1-pow(C2,2)),0.5))
         # S1 /= (pow(a,2)+pow(b,2))
@@ -47,9 +47,9 @@ class Model:
         # theta1 -= theta1 + Ttheta1
         # if (abs(self.A1*np.cos(theta1)+self.A2*np.cos(theta1+theta2)) - abs(a)) > 0.001:
         #     print("Error")
-        # if self.Up:
-        #    theta1 += theta2
-        #    theta2 *= -1
+        if self.Up:
+           theta1 += theta2
+           theta2 *= -1
         n = self.A1*np.sin(theta1)
         m = self.A2*np.sin(theta1+theta2)
         theta3 = (theta123 - theta1 - theta2)
@@ -124,7 +124,7 @@ model = Model(A1,A2,A3,D0)
 # print(x,y,z)
 
 #print(model.joint_positions(10,0,10,np.pi/2))
-angles = model.angles(15,0,0,-1*np.pi/2)
+angles = model.angles(7.5,0,5,-1*np.pi/2)
 #print(angles)
 positions = model.forward(angles[0],angles[1],angles[2],angles[3])
 print(positions)
