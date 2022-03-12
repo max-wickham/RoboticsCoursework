@@ -35,8 +35,8 @@ classdef NewRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 115200;
-        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
+        BAUDRATE                    = 1000000;
+        DEVICENAME                  = 'COM16';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -116,11 +116,11 @@ classdef NewRobotController
             % set speed
 %             with DRIVE = 4 and error = 50
             if len == 1
-                obj.set_arm_speed_mode(100,100);
+                obj.set_arm_speed_mode(35,5);
                 adjust = false;
             else
                 adjust = true;
-                obj.set_speed_arm(1000,100);
+                obj.set_speed_arm(5000,10);
             end
             % with drive = 0 and error < 20
 %             if len == 1
@@ -135,9 +135,15 @@ classdef NewRobotController
             end
                 
             for i=1:len(1)
-                % servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
-                % obj.move_servo_to_val(servo_vals, adjust);
-                obj.move_servo_to_val(servo_vals(i));
+%                 servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
+%                 obj.move_servo_to_val(servo_vals, adjust);
+if i == 1
+    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+elseif i == len(1)
+obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+else
+    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+end
             end
         end
 
@@ -150,7 +156,7 @@ classdef NewRobotController
             pos = obj.robot_model.current_position(servo_vals);
         end
 
-        function move_servo_to_val(obj, servo_vals, adjust)
+        function move_servo_to_val(obj, servo_vals, adjust, correct)
             if adjust == false
                 start_time = tic;
                 len =length(servo_vals);
@@ -177,15 +183,15 @@ classdef NewRobotController
                     end
                 end
             else
-                max_error = 5;
+                max_error = 10;
                 count = 0;
-                current_servo_vals = zeros(4);
+                current_servo_vals = zeros(1,4);
                 current_goal = servo_vals;
                 for i=1:4
                     current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                 end
                 diff = abs(norm(current_servo_vals-servo_vals));
-                max_time = diff / 500
+                max_time = diff / 1500
                 start_time = tic;
                 len = length(servo_vals);
                 for i=1:len
@@ -193,15 +199,18 @@ classdef NewRobotController
                 end
                 while 1
                     if toc(start_time) > max_time
-                        if count > 3
+                        if count > 1
+                            break
+                        end
+                        if correct == false
                             break
                         end
                         count = count + 1;
                         start_time = tic;
                         for i =1:4
                             dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                            current_goal(i) = dxl_present_position + 2*(servo_vals(i) - dxl_present_position);
-                            if abs(dxl_present_position - servo_vals(i)) < max_error
+                            current_goal(i) = dxl_present_position + 1.5*(servo_vals(i) - dxl_present_position);
+                            if abs(dxl_present_position - servo_vals(i)) > max_error
                                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_goal(i));
                             end
                         end
