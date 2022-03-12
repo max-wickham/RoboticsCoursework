@@ -7,8 +7,8 @@ function pos_array = trajectory(current_pos, final_pos)
     current_pos = current_pos(1:3);
     final_pos = final_pos(1:3);
     delta_pos = final_pos-current_pos;
-    N = round(norm(delta_pos/2));
-    degree = 1;
+    N = round(norm(delta_pos));
+    degree = 0.5;
     if mod(N,2) == 1
         N = N+1;
     end
