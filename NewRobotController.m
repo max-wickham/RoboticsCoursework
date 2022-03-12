@@ -117,7 +117,7 @@ classdef NewRobotController
 %             with DRIVE = 4 and error = 50
             if len == 1
                 obj.set_arm_speed_mode(35,5);
-                adjust = false;
+                adjust = true;
             else
                 adjust = true;
 %                 obj.set_speed_arm(1000,500);
@@ -164,7 +164,7 @@ classdef NewRobotController
                     write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
                 end
                 while 1
-                    if toc(start_time) > 2.5
+                    if toc(start_time) > 1.5
                         break
                     end
                     test = false
@@ -195,7 +195,7 @@ classdef NewRobotController
                 end
                 diff = abs(norm(current_servo_vals-servo_vals));
                 if correct
-                    max_time = diff / 500
+                    max_time = diff / 800
                 else
                     max_time = diff / 800
                 end
@@ -206,7 +206,7 @@ classdef NewRobotController
                 end
                 while 1
                     if toc(start_time) > max_time
-                        if count > 3
+                        if count > 2
                             for i=1:4
                                 dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, dxl_present_position);

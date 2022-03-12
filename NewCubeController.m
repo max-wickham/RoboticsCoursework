@@ -180,7 +180,7 @@ classdef NewCubeController
             %****COMPUTE MOVE CUBE: up, new position and orientation, down, open, up
             %up
             %--current_pos = obj.robotController.get_current_position();
-            current_pos = [cube_pos(1), cube_pos(2), obj.DOWN, gripper_initial_angle];
+            current_pos = [cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle];
             pos_middle_up_cube = trajectory(current_pos,[current_pos(1), current_pos(2), obj.UP_level, current_pos(4)] );
             %move
             vertical_cube_pos = [current_pos(1), current_pos(2), obj.UP_level, obj.grip_vertical];
