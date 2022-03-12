@@ -41,7 +41,7 @@ classdef KinematicModel
 %                 theta2 = theta2 * -1;
 %             end
             theta3 = (theta123 - theta1 - theta2);
-            r = [theta0, theta1, theta2, theta3];
+            r = [real(theta0), real(theta1), real(theta2), real(theta3)];
         end
         function r = positions(obj, x , y, z, theta)
             angles = obj.angles(x,y,z,theta);

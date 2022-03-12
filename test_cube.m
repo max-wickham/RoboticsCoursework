@@ -10,10 +10,12 @@ controller.setup_controller();
 %%controller.set_speed_arm(1000,100);
 %controller.set_speed_gripper();
 try
-        position = [10,10];
-        flip_angle = 90;
+        position = [10,0];
+        flip_angle = 270;
         %controller.robotController.setThreshold(3);
-        controller.flip_on_the_spot(position, flip_angle)
+        controller.flip_on_the_spot(position, flip_angle);
+        controller.robotController.get_current_position()
+
         %controller.main_cube([2,0], [4,0], flip_angle)
         %controller.main_cube([8,0], [3+0.2,0], flip_angle)
         controller.close_controller();
