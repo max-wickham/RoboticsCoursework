@@ -300,7 +300,10 @@ classdef CubeController
         function move_up(obj, pos)
             %pos array of 4 coords
             pos(3)= obj.UP_level;
-            obj.robotController.move_to_positions([pos]);
+            current_pos = obj.robotController.get_current_position()
+            pos_array = trajectory(current_pos, pos);
+            % obj.robotController.move_to_positions([pos]);
+            obj.robotController.move_to_positions(pos_array);
         end
 
         function move_down(obj, pos)
@@ -311,7 +314,11 @@ classdef CubeController
                 DOWN = obj.DOWN_level_hor;
             end
             pos(3)= DOWN;
-            obj.robotController.move_to_positions([pos]);
+            % obj.robotController.move_to_positions([pos]);
+            current_pos = obj.robotController.get_current_position()
+            pos_array = trajectory(current_pos, pos);
+            % obj.robotController.move_to_positions([pos]);
+            obj.robotController.move_to_positions(pos_array);
         end
 
         function open_gripper(obj)
