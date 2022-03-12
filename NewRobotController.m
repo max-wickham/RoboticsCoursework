@@ -120,7 +120,7 @@ classdef NewRobotController
                 adjust = false;
             else
                 adjust = true;
-                obj.set_speed_arm(5000,10);
+                obj.set_speed_arm(1000,10);
             end
             % with drive = 0 and error < 20
 %             if len == 1
@@ -137,13 +137,13 @@ classdef NewRobotController
             for i=1:len(1)
 %                 servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
 %                 obj.move_servo_to_val(servo_vals, adjust);
-if i == 1
-    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-elseif i == len(1)
-obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-else
-    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
-end
+                if i == 1
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+                elseif i == len(1)
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+                else
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                end
             end
         end
 
@@ -184,6 +184,9 @@ end
                 end
             else
                 max_error = 10;
+                if correct == false
+                    max_error = 100;
+                end
                 count = 0;
                 current_servo_vals = zeros(1,4);
                 current_goal = servo_vals;
@@ -191,7 +194,7 @@ end
                     current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                 end
                 diff = abs(norm(current_servo_vals-servo_vals));
-                max_time = diff / 1500
+                max_time = diff / 500
                 start_time = tic;
                 len = length(servo_vals);
                 for i=1:len
@@ -199,10 +202,18 @@ end
                 end
                 while 1
                     if toc(start_time) > max_time
-                        if count > 1
+                        if count > 3
+                            for i=1:4
+                                dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, dxl_present_position);
+                            end
                             break
                         end
                         if correct == false
+                            for i=1:4
+                                dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, dxl_present_position);
+                            end
                             break
                         end
                         count = count + 1;
@@ -228,6 +239,10 @@ end
                         %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
                     end 
                     if test == false
+                        for i=1:4
+                            dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+                            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, dxl_present_position);
+                        end
                         break
                     end
                 end

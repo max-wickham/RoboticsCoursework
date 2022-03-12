@@ -7,13 +7,13 @@ classdef CubeController
         grip_outwards = -0.02;
         grip_vertical = -pi/2;
         UP_level_vert = 6%5
-        DOWN_level_vert = 3.3%3.3 %3
+        DOWN_level_vert = 3.5%3.3 %3
         UP_level = 6%5
-        DOWN_level_hor = 4.5%3.3 %3
+        DOWN_level_hor = 4.8%3.3 %3
         grid_to_cm = 2.5
         max_range = 19.8
         min_range = 6
-        flip_position = [0, 20] %0, 17.5
+        flip_position = [7.5,-20 ] %0, 17.5
     end
     methods
 
@@ -148,7 +148,7 @@ classdef CubeController
             %****REACH: open, up, new position and gripper orientation, down, close
             obj.open_gripper();
             %---current_pos = obj.robotController.get_current_position();
-            current_pos = [5,0, obj.UP_level_vert, obj.grip_vertical];
+            current_pos = obj.robotController.get_current_position()%[5,0, obj.UP_level_vert, obj.grip_vertical];
             %up
             obj.robotController.move_to_positions([[current_pos(1), current_pos(2), obj.UP_level_vert, current_pos(4)]]);           
             %reach
@@ -166,11 +166,12 @@ classdef CubeController
             end
             obj.robotController.move_to_positions([[cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle]]);
             obj.close_gripper();
+            obj.robotController.get_current_position()
             
             %****MOVE CUBE: up, new position and orientation, down, open, up
             %up
             %--current_pos = obj.robotController.get_current_position();
-            current_pos = [cube_pos(1), cube_pos(2), obj.DOWN, gripper_initial_angle];
+            current_pos = [cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle];
             obj.robotController.move_to_positions([[current_pos(1), current_pos(2), obj.UP_level, current_pos(4)]]);
             %move
             vertical_cube_pos = [current_pos(1), current_pos(2), obj.UP_level, obj.grip_vertical];

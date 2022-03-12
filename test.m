@@ -10,18 +10,19 @@ controller.control_mode_setup();
 %controller.set_speed_gripper();
 try
     %pos = trajectory_angle([20,0,, -pi/2],[ 20,0,5,-0.05]);
-    current_pos = controller.get_current_position();
+    current_pos = controller.get_current_position()
     pos1 = trajectory(current_pos,[17.5,0,3, -pi/2]);
-    pos2 = trajectory([17.5,0,3, -pi/2],[5 ,0,3,-pi/2]);
-    pos = [pos1;pos2]
-    controller.move_to_positions(pos);
+     pos2 = trajectory([17.5,0,3, -pi/2],[5 ,0,3,-pi/2]);
+     pos = [pos1;pos2]
+%     pos = trajectory_angle([17.5,0,3, -pi/2],[17.5 ,0,3, -pi/2]);
+   controller.move_to_positions(pos);
 %     pos = trajectory([17.5,0,3, -pi/2],[5 ,0,3,-pi/2]);
     
     %----problem with this move, going the otehr way: controller.move_to_positions([10,10,10, -pi/2; 16,16,0,0]);
 %      controller.move_to_positions(pos);
     % controller.move_servo(5,2000);
     % controller.move_servo(5,2000);
-     controller.get_current_position()
+    t = controller.get_current_position()
     %controller.readPID();
 %    controller.test_move_to_positions([0,pi/2,-pi/2,pi/2]);
     controller.close();
