@@ -7,7 +7,7 @@ classdef CubeController
         grip_outwards = -0.2;
         grip_vertical = -pi/2;
         UP_level = 7%5
-        DOWN_level = 4.5%3.3 %3
+        DOWN_level = 4%3.3 %3
         grid_to_cm = 2.5
         max_range = 19.8
         min_range = 6
@@ -199,11 +199,11 @@ classdef CubeController
 
             if flip_angle == 0
                 return
-            elseif flip_angle < 180 %neg direction
+            elseif flip_angle == 90 %neg direction
                 if dir(2) % neg allowed
                     gripper_final_angle = obj.grip_inwards;
                     turn = 1;
-                elseif dir(2)
+                elseif dir(1)
                     gripper_final_angle = obj.grip_outwards;
                     turn = 3;
                 end
@@ -218,7 +218,7 @@ classdef CubeController
                     gripper_final_angle = obj.grip_outwards;
                     turn = 2;   
                 end
-            elseif flip_angle > 180 %pos direction
+            elseif flip_angle == 270 %pos direction
                 if dir(1) % neg allowed
                     gripper_final_angle = obj.grip_outwards;
                     turn = 1;
@@ -237,12 +237,8 @@ classdef CubeController
                 obj.flip_on_the_spot( obj.flip_position, flip_angle);
                 obj.reach_move_flip( obj.flip_position,position, obj.grip_vertical,obj.grip_vertical);
             else
+                
                 for i=1:turn
-                    obj.open_gripper();
-                    %--pos = obj.robotController.get_current_position();
-                    pos = [5,0, obj.UP_level, obj.grip_vertical];
-                    obj.move_up(pos);
-                    obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, pos(4)]]);
                     pos = trajectory_angle([position(1), position(2), obj.UP_level, pos(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
                     obj.robotController.move_to_positions(pos);
                     obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, gripper_final_angle]]);
@@ -293,10 +289,12 @@ classdef CubeController
         end
 
         function open_gripper(obj)
+            obj.robotController.set_speed_gripper(35);
             obj.robotController.move_servo(5,obj.open_servo_val);
         end
 
         function close_gripper(obj)
+            obj.robotController.set_speed_gripper(35);
             obj.robotController.move_servo(5,obj.closed_servo_val);
         end
     end

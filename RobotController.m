@@ -97,6 +97,40 @@ classdef RobotController
                 end
             end
         end
+        function test_move_to_positions(obj, angles)
+            % moves the arm gripper to a series of positions,
+            % positions should be an array of arrays that each have 4 values, the x y z oordinate
+            % and then the angle in radians of the gripper
+            
+            % !! 
+            % set speed or time mode depending on positions length
+            % !!
+
+
+            % Try 
+
+
+
+            % set speed
+%             with DRIVE = 4 and error = 50
+          
+                obj.set_arm_speed_mode(100,100);
+            % with drive = 0 and error < 20
+%             if len == 1
+%                 obj.set_arm_speed_mode(35,5);
+%             else
+%                 obj.set_speed_arm(35,5);
+%             end
+
+            % servo_vals = zeros(len(1),4);
+            % for i=1:len(1)
+            %     servo_vals(i,:) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
+            % end
+                
+                servo_vals = obj.robot_model.test_servo_vals(angles);
+                obj.move_servo_to_val(servo_vals);
+%                 obj.move_servo_to_val(servo_vals(i));
+        end
 
         function move_to_positions(obj, positions)
             % moves the arm gripper to a series of positions,
@@ -116,9 +150,9 @@ classdef RobotController
             % set speed
 %             with DRIVE = 4 and error = 50
             if len == 1
-                obj.set_arm_speed_mode(100,100);
+                obj.set_arm_speed_mode(35,5);
             else
-                obj.set_speed_arm(1000,100);
+                obj.set_speed_arm(500,10);
             end
             % with drive = 0 and error < 20
 %             if len == 1

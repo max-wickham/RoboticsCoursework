@@ -2,7 +2,7 @@ classdef RobotModel
     properties
         kinematic_model = KinematicModel()
         angle_scalar = [1,-1,-1,-1]
-        angle_offset = [0,-0.1756-pi/2,pi/2+0,pi] %radians %-0.18356 0.1756
+        angle_offset = [0,-0.18356-pi/2,pi/2+0.18356,pi] %radians %-0.18356 0.1756 18356*2
         max_servo_val = 4096 %val for 2pi radians
         pos_scalar = [-1,-1,1]
         pos_offset = [0,0,0]
@@ -20,6 +20,17 @@ classdef RobotModel
             len = length(new_servo_vals);
             for i=1:len
                 new_servo_vals(i) = angles(i) * (obj.angle_scalar(i) * obj.max_servo_val / (2*pi)) + obj.angle_offset(i) * obj.max_servo_val / (2*pi) %convert from rad to servo val
+                new_servo_vals(i) = mod((new_servo_vals(i)+4096), 4096) %remove neg
+            end
+            r = new_servo_vals;
+        end
+        
+        function r = test_servo_vals(obj, angles)
+            % Generate the servo values needded to achieve a given position
+            new_servo_vals = [0,0,0,0];
+            len = length(new_servo_vals);
+            for i=1:len
+                new_servo_vals(i) = angles(i) * (obj.angle_scalar(i) * obj.max_servo_val / (2*pi)) + (obj.angle_offset(i) * obj.max_servo_val / (2*pi)) %convert from rad to servo val
                 new_servo_vals(i) = mod((new_servo_vals(i)+4096), 4096) %remove neg
             end
             r = new_servo_vals;
