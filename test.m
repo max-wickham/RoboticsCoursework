@@ -1,7 +1,7 @@
 %model = KinematicModel();
 %model.positions(10,0,10,0)
 
-controller = RobotController();
+controller = NewRobotController();
 controller.init();
 controller.control_mode_setup();
 % controller.move_servo(5,2000);
