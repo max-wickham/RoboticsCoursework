@@ -13,7 +13,7 @@ classdef RobotController
 
         port_num = 0
         lib_name = ''
-        max_angle_error = 100%100
+        max_angle_error = 50%100
 
         %% ---- Control Table Addresses ---- %%
 
@@ -114,12 +114,18 @@ classdef RobotController
 
 
             % set speed
-
+%             with DRIVE = 4 and error = 50
             if len == 1
                 obj.set_arm_speed_mode(100,100);
             else
-                obj.set_speed_arm(1000,10);
+                obj.set_speed_arm(1000,100);
             end
+            % with drive = 0 and error < 20
+%             if len == 1
+%                 obj.set_arm_speed_mode(35,5);
+%             else
+%                 obj.set_speed_arm(35,5);
+%             end
 
             % servo_vals = zeros(len(1),4);
             % for i=1:len(1)

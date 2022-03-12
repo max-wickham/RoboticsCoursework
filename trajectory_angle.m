@@ -5,7 +5,7 @@ function pos_array = trajectory_angle(current_pos, final_pos)
     if current_pos(4) > pi
         current_pos(4) = current_pos(4) - 2*pi;
     end
-    N = round(norm(final_pos(4) - current_pos(4)) * 20 / pi);
+    N = round(norm(final_pos(4) - current_pos(4)) * 40 / pi);
     positions = zeros(N,4);
     angles = linspace(current_pos(4), final_pos(4), N);
     for i = 1:N
