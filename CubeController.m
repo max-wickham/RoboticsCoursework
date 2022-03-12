@@ -4,14 +4,14 @@ classdef CubeController
         open_servo_val = 2000
         closed_servo_val = 2460
         grip_inwards = -pi+0.04;
-        grip_outwards = -0.2;
+        grip_outwards = -0.02;
         grip_vertical = -pi/2;
-        UP_level = 7%5
+        UP_level = 5%5
         DOWN_level = 4%3.3 %3
         grid_to_cm = 2.5
         max_range = 19.8
         min_range = 6
-        flip_position = [17, 17] %??
+        flip_position = [0, 20] %0, 17.5
     end
     methods
 
@@ -239,7 +239,7 @@ classdef CubeController
             else
                 
                 for i=1:turn
-                    pos = trajectory_angle([position(1), position(2), obj.UP_level, pos(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+                    pos = trajectory_angle([position(1), position(2), obj.UP_level, obj.grip_vertical],[position(1), position(2), obj.UP_level, gripper_final_angle]);
                     obj.robotController.move_to_positions(pos);
                     obj.robotController.move_to_positions([[position(1), position(2), obj.DOWN_level, gripper_final_angle]]);
                     obj.close_gripper();

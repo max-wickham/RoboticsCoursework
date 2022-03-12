@@ -8,6 +8,9 @@ classdef KinematicModel
     end
     methods
         function r = angles(obj, x , y, z, theta)
+            if abs(x) < 0.01
+                x = 0.001
+            end
 %             obj.A1 = 13;
 %             obj.A2 = 12.4;
 %             obj.A3 = 14.6;
