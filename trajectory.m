@@ -7,7 +7,7 @@ function pos_array = trajectory(current_pos, final_pos)
     current_pos = current_pos(1:3);
     final_pos = final_pos(1:3);
     delta_pos = final_pos-current_pos;
-    N = round(norm(delta_pos));
+    N = round(norm(delta_pos/2));
     degree = 1;
     if mod(N,2) == 1
         N = N+1;
@@ -18,7 +18,7 @@ function pos_array = trajectory(current_pos, final_pos)
     trans = transpose(cumsum(trans)) * delta_pos;
     positions = current_pos + trans;
     angle_column = zeros(N,1) + angle;
-    pos_array = [positions angle_column];
+    pos_array = [positions angle_column]
 
     %N = 10; %use even number, could be adjusted depending on the distance
     % degree = 1; %find optimal distribution based on robot tests

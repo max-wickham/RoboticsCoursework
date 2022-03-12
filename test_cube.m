@@ -10,12 +10,12 @@ controller.setup_controller();
 %%controller.set_speed_arm(1000,100);
 %controller.set_speed_gripper();
 try
-        %position = [20.1,0];
-        flip_angle = 270;
+        position = [17,17];
+        flip_angle = 90;
         %controller.robotController.setThreshold(3);
-        %controller.flip_on_the_spot(position, flip_angle)
+        controller.flip_on_the_spot(position, flip_angle)
         %controller.main_cube([2,0], [4,0], flip_angle)
-        controller.main_cube([8,0], [3,0], flip_angle)
+        %controller.main_cube([8,0], [3+0.2,0], flip_angle)
         controller.close_controller();
 
    catch ME
@@ -23,6 +23,7 @@ try
         ME
 
 end 
+clear all
 %trajectory([10,10,10, pi/2],[10,0,10, pi/2])
 
 % polar_to_cartesian([0,0.1,0.2], 5) + [0, 2]
