@@ -7,9 +7,10 @@ classdef DrawingController
         open_value = 2000
         lift_height = 14%11
         lower_height = 11.2%8.8
-        steps_per_cm_circle = 8
+        steps_per_cm_circle = 2
         pen_pos_upper = [0,0,0]
         pen_pos_lower = [0,0,0]
+        stretch_scale = 3
     end
 
     methods
@@ -38,10 +39,12 @@ classdef DrawingController
             % Rotate pen
             obj.robotController.move_to_positions([[obj.pen_pos_upper obj.pen_pick_angle]]);
             obj.robotController.move_servo(5,obj.open_value);
-            obj.robotController.move_to_positions([[obj.pen_pos_lower obj.pen_pick_angle]]);
+            pos_array = obj.robotController.trajectory([obj.pen_pos_upper obj.pen_pick_angle],[obj.pen_pos_lower obj.pen_pick_angle])
+            obj.robotController.move_to_positions(pos_array);
             obj.robotController.move_servo(5,obj.close_value);
             obj.robotController.move_to_positions([[obj.pen_pos_upper obj.pen_pick_angle]]);
-            obj.robotController.move_to_positions(trajectory_angle([obj.pen_pos_upper obj.pen_pick_angle], [obj.pen_pos_upper obj.grip_angle]));
+            pos_array = obj.robotController.trajectory_angle([obj.pen_pos_upper obj.pen_pick_angle], [obj.pen_pos_upper obj.grip_angle]);
+            obj.robotController.move_to_positions(pos_array);
         end
 
         function draw_line(obj, start_pos, end_pos, continuos_start, continuos_end) % start_pos and end_pos are 2 dimensional
@@ -64,8 +67,12 @@ classdef DrawingController
                 upper_end_pos = [end_pos(1), end_pos(2), obj.lift_height, obj.grip_angle];
             end
 
-            drawing_positions = trajectory(lower_start_pos, lower_end_pos);
-            positions = [[upper_start_pos] ; drawing_positions ; [upper_end_pos]];
+            
+            obj.robotController.move_to_positions([upper_start_pos]);
+            drawing_positions = obj.robotController.trajectory(lower_start_pos, lower_end_pos);
+            lower_array =  obj.robotController.trajectory(upper_start_pos, lower_start_pos);
+            raise_array = obj.robotController.trajectory(lower_end_pos, upper_end_pos);
+            positions = [lower_array ; drawing_positions ; raise_array];
             obj.robotController.move_to_positions(positions);
         end
 
@@ -117,14 +124,43 @@ classdef DrawingController
             angles = angles * delta_angle;
             angles = angles + start_angle;
             positions = polar_to_cartesian(angles, radius) + center;
-            figure()
-            pos_t = transpose(positions)
-            plot(pos_t(1, :), pos_t(2, :), 'o')
+
+            %adjust circle
+            % find normal
+            len = length(positions);
+            normal = [center(2), -center(1)];
+            normal = normal / norm(normal);
+            for i=1:len(1)
+                dot_product = (center(1)/center(2)) > (positions(i,1)/positions(i,2));
+                numerator = abs((center(1) - 0) * (0 - positions(i,2)) - (0 - positions(i,1)) * (center(2) - 0));
+	
+                % Find the denominator for our point-to-line distance formula.
+                denominator = sqrt((center(1) - 0) ^ 2 + (center(2) - 0) ^ 2);
+                
+                % Compute the distance.
+                distance = numerator ./ denominator;
+                if dot_product > 0
+                    positions(i,:) = positions(i,:) -  normal*distance / obj.stretch_scale;
+                else
+                    positions(i,:) = positions(i,:) +  normal*distance / obj.stretch_scale;
+                end
+            end
+
+%             figure()
+%             pos_t = transpose(positions)
+%             plot(pos_t(1, :), pos_t(2, :), 'o')
             angle_column = zeros(num_steps,1) + obj.grip_angle;
             height_column = zeros(num_steps,1) + obj.lower_height;
             positions = [positions height_column angle_column];
             positions = [[upper_start_pos]; positions; [upper_end_pos]];
             obj.robotController.move_to_positions([upper_start_pos]);
+            obj.robotController.move_to_positions(positions);
+
+            obj.robotController.move_to_positions([upper_start_pos]);
+            drawing_positions = [positions height_column angle_column];
+            lower_array =  obj.robotController.trajectory(upper_start_pos, lower_start_pos);
+            raise_array = obj.robotController.trajectory(lower_end_pos, upper_end_pos);
+            positions = [lower_array ; drawing_positions ; raise_array];
             obj.robotController.move_to_positions(positions);
 
         end
