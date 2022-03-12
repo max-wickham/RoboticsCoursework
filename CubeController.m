@@ -4,10 +4,10 @@ classdef CubeController
         open_servo_val = 2000
         closed_servo_val = 2460
         grip_inwards = -pi+0.04;
-        grip_outwards = 0;
+        grip_outwards = -0.2;
         grip_vertical = -pi/2;
-        UP_level = 5
-        DOWN_level = 3.3 %3
+        UP_level = 7%5
+        DOWN_level = 4.5%3.3 %3
         grid_to_cm = 2.5
         max_range = 19.8
         min_range = 6

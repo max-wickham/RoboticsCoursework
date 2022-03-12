@@ -3,10 +3,10 @@ classdef DrawingController
         robotController = RobotController()
         grip_angle = 0
         pen_pick_angle = -pi/2
-        close_value = 2400%correct value2600
+        close_value = 2500%correct value2600
         open_value = 2000
         lift_height = 14%11
-        lower_height = 10%8.8
+        lower_height = 11.2%8.8
         steps_per_cm_circle = 8
         pen_pos_upper = [0,0,0]
         pen_pos_lower = [0,0,0]
@@ -124,7 +124,9 @@ classdef DrawingController
             height_column = zeros(num_steps,1) + obj.lower_height;
             positions = [positions height_column angle_column];
             positions = [[upper_start_pos]; positions; [upper_end_pos]];
+            obj.robotController.move_to_positions([upper_start_pos]);
             obj.robotController.move_to_positions(positions);
+
         end
     end
 end

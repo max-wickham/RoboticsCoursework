@@ -9,7 +9,8 @@ controller.control_mode_setup();
 %%controller.set_speed_arm(1000,100);
 %controller.set_speed_gripper();
 try
-    pos = trajectory([10,0,10, -pi/2],[ 17.5,0,2,-pi/2]);
+    %pos = trajectory_angle([20,0,, -pi/2],[ 20,0,5,-0.05]);
+    pos = trajectory([17.5,0,5, -pi/2],[7.5 ,0,5,-pi/2]);
 
     %----problem with this move, going the otehr way: controller.move_to_positions([10,10,10, -pi/2; 16,16,0,0]);
     controller.move_to_positions(pos);
