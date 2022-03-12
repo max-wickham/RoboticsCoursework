@@ -9,7 +9,10 @@
 % end
 % y = toc(x);
 % y
-model = KinematicModel();
-angles = model.angles(7.5,0,5,-pi/2)
+% model = KinematicModel();
+% angles = model.angles(7.5,0,5,-pi/2)
 % position = model.forward(0,0,0,0)
-position = model.forward(angles(1),angles(2),angles(3),angles(4))
+% position = model.forward(angles(1),angles(2),angles(3),angles(4))
+
+x = -0;
+x == 0

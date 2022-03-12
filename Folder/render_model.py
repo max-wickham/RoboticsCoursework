@@ -23,7 +23,7 @@ x_slider = Slider(
     label='X coordinate',
     valmin=0,
     valmax=40,
-    valinit=15,
+    valinit=0.01,
 )
 y = fig.add_subplot(80,1,73)
 y_slider = Slider(
@@ -31,7 +31,7 @@ y_slider = Slider(
     label='Y coordinate',
     valmin=-40,
     valmax=40,
-    valinit=0,
+    valinit=20,
 )
 z = fig.add_subplot(80,1,76)
 z_slider = Slider(
@@ -39,7 +39,7 @@ z_slider = Slider(
     label='Z coordinate',
     valmin=0,
     valmax=40,
-    valinit=2,
+    valinit=5,
 )
 theta = fig.add_subplot(80,1,80)
 theta_slider = Slider(
@@ -47,7 +47,7 @@ theta_slider = Slider(
     label='Tilt',
     valmin=-90,
     valmax=90,
-    valinit=-1*np.pi/2,
+    valinit=-90,
 )
 
 # The function to be called anytime a slider's value changes
