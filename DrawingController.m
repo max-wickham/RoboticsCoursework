@@ -1,6 +1,6 @@
 classdef DrawingController
     properties
-        robotController = RobotController()
+        robotController = NewRobotController()
         grip_angle = 0
         pen_pick_angle = -pi/2
         close_value = 2500%correct value2600
@@ -151,17 +151,32 @@ classdef DrawingController
 %             plot(pos_t(1, :), pos_t(2, :), 'o')
             angle_column = zeros(num_steps,1) + obj.grip_angle;
             height_column = zeros(num_steps,1) + obj.lower_height;
-            positions = [positions height_column angle_column];
-            positions = [[upper_start_pos]; positions; [upper_end_pos]];
-            obj.robotController.move_to_positions([upper_start_pos]);
-            obj.robotController.move_to_positions(positions);
+%             positions = [positions height_column angle_column];
+%             positions = [[upper_start_pos]; positions; [upper_end_pos]];
+%             obj.robotController.move_to_positions([upper_start_pos]);
+%             obj.robotController.move_to_positions(positions);
 
             obj.robotController.move_to_positions([upper_start_pos]);
             drawing_positions = [positions height_column angle_column];
-            lower_array =  obj.robotController.trajectory(upper_start_pos, lower_start_pos);
-            raise_array = obj.robotController.trajectory(lower_end_pos, upper_end_pos);
-            positions = [lower_array ; drawing_positions ; raise_array];
-            obj.robotController.move_to_positions(positions);
+            lower_array =  obj.robotController.trajectory(upper_start_pos, drawing_positions(1,:));
+            raise_array = obj.robotController.trajectory(drawing_positions(end,:), upper_end_pos);
+            obj.robotController.move_to_positions(lower_array);
+            positions = drawing_positions;
+            split up positions into multiple arrays and carry out each one individually
+            cells = [];
+            x = size(positions,1);
+            while x > 5
+                cells(end+1) = 5;
+                x = x - 5;
+            end
+            cells(end+1) = x;
+            positions = mat2cell( positions  , cells);
+            len = length(positions);
+            for i=1:len(1)
+                x = positions(i,:,:);
+                obj.robotController.move_to_positions(x);
+            end
+            obj.robotController.move_to_positions(raise_array);
 
         end
     end

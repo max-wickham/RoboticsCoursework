@@ -137,13 +137,22 @@ classdef NewRobotController
             for i=1:len(1)
 %                 servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
 %                 obj.move_servo_to_val(servo_vals, adjust);
-                if i == 1
+
+                if (i-1) / len(1) < 0.2
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-                elseif i == len(1)
+                elseif (i) / len(1) > 0.8
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
                 else
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
                 end
+
+                % if i == 1
+                %     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+                % elseif i == len(1)
+                %     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+                % else
+                %     obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                % end
             end
         end
 
@@ -157,32 +166,32 @@ classdef NewRobotController
         end
 
         function move_servo_to_val(obj, servo_vals, adjust, correct)
-            if adjust == false
-                start_time = tic;
-                len =length(servo_vals);
-                for i=1:len
-                    write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
-                end
-                while 1
-                    if toc(start_time) > 1.5
-                        break
-                    end
-                    test = false
-                    len = length(servo_vals);
-                    for i=1:len
-                        % check if not at correct position and if so continue
-                        dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                        correct_position = abs(dxl_present_position - servo_vals(i)) < obj.max_angle_error;
-                        if correct_position == false
-                            test = true
-                        end
-                        %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
-                    end 
-                    if test == false
-                        break
-                    end
-                end
-            else
+            % if adjust == false
+            %     start_time = tic;
+            %     len =length(servo_vals);
+            %     for i=1:len
+            %         write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
+            %     end
+            %     while 1
+            %         if toc(start_time) > 1.5
+            %             break
+            %         end
+            %         test = false
+            %         len = length(servo_vals);
+            %         for i=1:len
+            %             % check if not at correct position and if so continue
+            %             dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+            %             correct_position = abs(dxl_present_position - servo_vals(i)) < obj.max_angle_error;
+            %             if correct_position == false
+            %                 test = true
+            %             end
+            %             %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
+            %         end 
+            %         if test == false
+            %             break
+            %         end
+            %     end
+            % else
                 max_error = 10;
                 if correct == false
                     max_error = 100;
@@ -195,7 +204,7 @@ classdef NewRobotController
                 end
                 diff = abs(norm(current_servo_vals-servo_vals));
                 if correct
-                    max_time = diff / 800
+                    max_time = diff / 500
                 else
                     max_time = diff / 800
                 end
@@ -251,7 +260,7 @@ classdef NewRobotController
                         end
                         break
                     end
-                end
+                % end
             end
         end
 
@@ -366,7 +375,7 @@ classdef NewRobotController
             obj.set_speed_arm(1000,500);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
-            final_pos = final_pos(1:3);
+            final_pos = final_pos(1:3);s
             delta_pos = final_pos-current_pos;
             N = round(norm(delta_pos));
             degree = 0.3;
