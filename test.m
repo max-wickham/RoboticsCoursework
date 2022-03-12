@@ -14,6 +14,7 @@ try
     pos1 = trajectory(current_pos,[17.5,0,3, -pi/2]);
      pos2 = trajectory([17.5,0,3, -pi/2],[5 ,0,3,-pi/2]);
      pos = [pos1;pos2]
+% pos = pos1
 %     pos = trajectory_angle([17.5,0,3, -pi/2],[17.5 ,0,3, -pi/2]);
    controller.move_to_positions(pos);
 %     pos = trajectory([17.5,0,3, -pi/2],[5 ,0,3,-pi/2]);

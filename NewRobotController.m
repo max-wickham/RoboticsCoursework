@@ -120,7 +120,7 @@ classdef NewRobotController
                 adjust = false;
             else
                 adjust = true;
-                obj.set_speed_arm(1000,10);
+%                 obj.set_speed_arm(1000,500);
             end
             % with drive = 0 and error < 20
 %             if len == 1
@@ -194,7 +194,11 @@ classdef NewRobotController
                     current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                 end
                 diff = abs(norm(current_servo_vals-servo_vals));
-                max_time = diff / 500
+                if correct
+                    max_time = diff / 500
+                else
+                    max_time = diff / 800
+                end
                 start_time = tic;
                 len = length(servo_vals);
                 for i=1:len
@@ -239,9 +243,11 @@ classdef NewRobotController
                         %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
                     end 
                     if test == false
+                        if correct == false
                         for i=1:4
                             dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, dxl_present_position);
+                        end
                         end
                         break
                     end
@@ -283,6 +289,11 @@ classdef NewRobotController
             end
             
             obj.setThreshold(10);
+            for i=1:4
+                write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 10, 4);
+                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 112, 1000);
+                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), 108, 500);
+            end
         end
 
         function close(obj)
@@ -345,6 +356,83 @@ classdef NewRobotController
 
             obj.control_mode_setup()
 
+        end
+        
+
+                %this function takes the current and a goal position 
+        %and split the trajectory in smaller unevenly-distributed steps 
+
+        function pos_array = trajectory(obj,current_pos, final_pos)
+            obj.set_speed_arm(1000,500);
+            angle = final_pos(4);
+            current_pos = current_pos(1:3);
+            final_pos = final_pos(1:3);
+            delta_pos = final_pos-current_pos;
+            N = round(norm(delta_pos));
+            degree = 0.3;
+            if mod(N,2) == 1
+                N = N+1;
+            end
+            trans = linspace(-1, 1, N);
+            trans = abs(trans.^(-degree));
+            trans = trans./sum(trans, 'all');
+            trans = transpose(cumsum(trans)) * delta_pos;
+            positions = current_pos + trans;
+            angle_column = zeros(N,1) + angle;
+            pos_array = [positions angle_column];
+
+            %N = 10; %use even number, could be adjusted depending on the distance
+            % degree = 1; %find optimal distribution based on robot tests
+            % distance = final_pos-current_pos;
+
+            % N = round(norm(distance));
+            % if mod(N,2) == 1
+            %     N = N+1;
+            % end
+
+            % x_trans = linspace(-1, 1, N);
+            % c = abs(x_trans.^(-degree));
+            % y_trans = c./sum(c, 'all');
+
+            % yx = y_trans.*distance(:,1);
+            % yy = y_trans.*distance(:,2);
+            % yz = y_trans.*distance(:,3);
+
+            % pos_array =[];
+            % a = current_pos(:,1);
+            % b = current_pos(:,2);
+            % c = current_pos(:,3);
+            % for i=1:N
+            %     pos_array(i,1) = a+yx(i);
+            %     a = pos_array(i,1);
+            %     pos_array(i,2) = b+yy(i);
+            %     b = pos_array(i,2);
+            %     pos_array(i,3) = c+yz(i);
+            %     c = pos_array(i,3);
+            %     pos_array(i,4) = final_pos(4);
+            % end
+
+            %figure()
+            %plot(pos_array(1,:),pos_array(2,:), 'o')
+        end
+        
+        function pos_array = trajectory_angle(obj,current_pos, final_pos)
+            
+            
+            obj.set_speed_arm(1000,10);
+            if final_pos(4) > pi
+                final_pos(4) = final_pos(4) - 2*pi;
+            end
+            if current_pos(4) > pi
+                current_pos(4) = current_pos(4) - 2*pi;
+            end
+            N = round(norm(final_pos(4) - current_pos(4)) * 10 / pi);
+            positions = zeros(N,4);
+            angles = linspace(current_pos(4), final_pos(4), N);
+            for i = 1:N
+                positions(i,1:4) = [current_pos(1), current_pos(2), current_pos(3), angles(i)];
+            end
+            pos_array = positions;
         end
     end
 end
