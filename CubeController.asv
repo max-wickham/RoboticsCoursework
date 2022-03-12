@@ -153,9 +153,8 @@ classdef CubeController
             obj.robotController.move_to_positions([[current_pos(1), current_pos(2), obj.UP_level_vert, current_pos(4)]]);           
             %reach
             up_grip_pos = [cube_pos(1), cube_pos(2), obj.UP_level_vert,obj.grip_vertical ];
-%             pos_array = obj.robotController.trajectory(current_pos, up_grip_pos);
-%             obj.robotController.move_to_positions(pos_array);
-            obj.robotController.move_to_positions([up_grip_pos]);
+            pos_array = obj.robotController.trajectory(current_pos, up_grip_pos);
+            obj.robotController.move_to_positions(pos_array);
             orient_grip_pos = [cube_pos(1), cube_pos(2), obj.UP_level_vert, gripper_initial_angle];
             pos_array = obj.robotController.trajectory_angle(up_grip_pos, orient_grip_pos); %angle obj.robotController.traj
             obj.robotController.move_to_positions(pos_array);
@@ -181,7 +180,7 @@ classdef CubeController
             up_cube_pos = [final_pos(1), final_pos(2), obj.UP_level, obj.grip_vertical];
 %             pos_array = obj.robotController.trajectory(vertical_cube_pos, up_cube_pos);
 %             obj.robotController.move_to_positions(pos_array);
-            obj.robotController.move_to_positions([up_cube_pos]);
+        obj.robotController.move_to_positions(pos_array);
             orient_cube_pos = [final_pos(1), final_pos(2), obj.UP_level, gripper_final_angle];
             pos_array = obj.robotController.trajectory_angle(up_cube_pos, orient_cube_pos);
             obj.robotController.move_to_positions(pos_array);
