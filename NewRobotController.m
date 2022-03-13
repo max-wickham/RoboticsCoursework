@@ -380,7 +380,7 @@ classdef NewRobotController
             obj.set_speed_arm(1000,500);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
-            final_pos = final_pos(1:3);s
+            final_pos = final_pos(1:3);
             delta_pos = final_pos-current_pos;
             N = round(norm(delta_pos));
             degree = 0.3;

@@ -3,13 +3,13 @@ classdef DrawingController
         robotController = NewRobotController()
         grip_angle = 0
         pen_pick_angle = -pi/2
-        close_value = 2500%correct value2600
+        close_value = 2450%correct value2600
         open_value = 2000
-        lift_height = 14%11
-        lower_height = 11.2%8.8
+        lift_height = 16%11
+        lower_height = 12%8.8
         steps_per_cm_circle = 2
-        pen_pos_upper = [0,0,0]
-        pen_pos_lower = [0,0,0]
+        pen_pos_upper = [0,6*2.5,16]
+        pen_pos_lower = [0,6*2.5,0.5]
         stretch_scale = 3
     end
 
@@ -39,10 +39,11 @@ classdef DrawingController
             % Rotate pen
             obj.robotController.move_to_positions([[obj.pen_pos_upper obj.pen_pick_angle]]);
             obj.robotController.move_servo(5,obj.open_value);
-            pos_array = obj.robotController.trajectory([obj.pen_pos_upper obj.pen_pick_angle],[obj.pen_pos_lower obj.pen_pick_angle])
+            pos_array = obj.robotController.trajectory([obj.pen_pos_upper obj.pen_pick_angle],[obj.pen_pos_lower obj.pen_pick_angle]);
             obj.robotController.move_to_positions(pos_array);
             obj.robotController.move_servo(5,obj.close_value);
-            obj.robotController.move_to_positions([[obj.pen_pos_upper obj.pen_pick_angle]]);
+            pos_array = obj.robotController.trajectory([obj.pen_pos_lower obj.pen_pick_angle],[obj.pen_pos_upper obj.pen_pick_angle]);
+            obj.robotController.move_to_positions(pos_array);
             pos_array = obj.robotController.trajectory_angle([obj.pen_pos_upper obj.pen_pick_angle], [obj.pen_pos_upper obj.grip_angle]);
             obj.robotController.move_to_positions(pos_array);
         end
@@ -162,20 +163,21 @@ classdef DrawingController
             raise_array = obj.robotController.trajectory(drawing_positions(end,:), upper_end_pos);
             obj.robotController.move_to_positions(lower_array);
             positions = drawing_positions;
-            split up positions into multiple arrays and carry out each one individually
-            cells = [];
-            x = size(positions,1);
-            while x > 5
-                cells(end+1) = 5;
-                x = x - 5;
-            end
-            cells(end+1) = x;
-            positions = mat2cell( positions  , cells);
-            len = length(positions);
-            for i=1:len(1)
-                x = positions(i,:,:);
-                obj.robotController.move_to_positions(x);
-            end
+%             split up positions into multiple arrays and carry out each one individually
+%             cells = [];
+%             x = size(positions,1);
+%             while x > 5
+%                 cells(end+1) = 5;
+%                 x = x - 5;
+%             end
+%             cells(end+1) = x;
+%             positions = mat2cell( positions  , cells);
+%             len = length(positions);
+%             for i=1:len(1)
+%                 x = positions(i,:,:);
+%                 obj.robotController.move_to_positions(x);
+%             end
+            obj.robotController.move_to_positions(positions)
             obj.robotController.move_to_positions(raise_array);
 
         end

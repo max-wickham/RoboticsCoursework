@@ -13,6 +13,8 @@ classdef CubeController
         grid_to_cm = 2.5
         max_range = 19.8
         min_range = 6
+        max_range_stack = 19.8
+        min_range_stack = 6
         flip_position = [7.5,-20 ] %0, 17.5
     end
     methods
@@ -360,7 +362,7 @@ classdef CubeController
             %INPUTS
             %stack_num is cube number moved in finished pos
             if stack_num == 1
-                obj.robotController(start_pos, finish_pos, flip_angle);
+                obj.main_cube(start_pos, finish_pos, flip_angle);
             else
                 %***INPUTS****% 
                 % cube pos, final pos = x,y in grid coords
