@@ -35,8 +35,8 @@ classdef NewRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 1000000;
-        DEVICENAME                  = 'COM16';       % Check which port is being used on your controller
+        BAUDRATE                    = 115200;
+        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -204,7 +204,7 @@ classdef NewRobotController
                 end
                 diff = abs(norm(current_servo_vals-servo_vals));
                 if correct
-                    max_time = diff / 500
+                    max_time = diff / 800
                 else
                     max_time = diff / 800
                 end
@@ -215,6 +215,11 @@ classdef NewRobotController
                 end
                 while 1
                     if toc(start_time) > max_time
+                        for i=1:4
+                            current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+                        end
+                        diff = abs(norm(current_servo_vals-servo_vals));
+                        max_time = diff / 800
                         if count > 2
                             for i=1:4
                                 dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 

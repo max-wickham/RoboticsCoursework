@@ -7,9 +7,9 @@ classdef CubeController
         grip_outwards = -0.02;
         grip_vertical = -pi/2;
         UP_level_vert = 6%5
-        DOWN_level_vert = 3.5%3.3 %3
+        DOWN_level_hor = 3%3.3 %3
         UP_level = 6%5
-        DOWN_level_hor = 4.8%3.3 %3
+        DOWN_level_vert = 4.3%3.3 %3
         grid_to_cm = 2.5
         max_range = 19.8
         min_range = 6
