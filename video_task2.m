@@ -34,9 +34,9 @@ controller = CubeController();
 controller.setup_controller();
 
 try
-        start1 = [3,-8];
-        start2 = [9,0];
-        start3 = [6,6];
+        start1 = [3*2.5,-8*2.5];
+        start2 = [9*2.5,0];
+        start3 = [6*2.5,6*2.5];
         
         controller.robotController.get_current_position()
 
