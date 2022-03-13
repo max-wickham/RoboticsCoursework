@@ -2,7 +2,7 @@ classdef KinematicModel
     properties
         A1 = 13
         A2 = 12.4
-        A3 = 14.6
+        A3 = 11 % pen %14.6 % gripper
         D0 = 7.7
         Up = true
     end
