@@ -386,6 +386,7 @@ classdef CubeController
                         gripper_initial_angle = obj.grip_outwards;   
                 elseif(~dir_init(1))
                             message = 'need to use third position and flip cube first'
+
                             obj.reach_move_flip(cube_pos, obj.flip_position, obj.grip_vertical,obj.grip_vertical);
                             obj.reach_move_flip_stack(obj.flip_position,final_pos,  obj.grip_outwards,obj.grip_outwards, stack_num);   
                 end   
