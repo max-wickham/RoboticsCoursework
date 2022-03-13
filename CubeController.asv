@@ -252,7 +252,7 @@ classdef CubeController
               %adjustment of scentrato 
                 for i=1:turn
                     %orient
-                    pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, obj.grip_vertical],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+                    pos = obj.robotController.trajectory_angle([position(1)+, position(2), obj.UP_level, obj.grip_vertical],[position(1), position(2), obj.UP_level, gripper_final_angle]);
                     obj.robotController.move_to_positions(pos);
                     %down and close
                     if gripper_final_angle == obj.grip_vertical
@@ -271,18 +271,18 @@ classdef CubeController
                         obj.open_gripper();
                         obj.robotController.move_to_positions([[position(1), position(2), obj.UP_level, obj.grip_outwards]]);
                     else
-                          if (gripper_final_angle == obj.grip_vertcal)
+                                      if (gripper_final_angle == obj.grip_vertcal)
                               vec = position / norm(position) * 0.2; 
                           else 
-                              vec = [0,0];
+                              vec = 0;
                           end
                         %--pos_current = obj.robotController.get_current_position()
-                        pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
-                        pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical]);
+                        pos_current = [position(1)+vec, position(2)+vec, obj.UP_level, gripper_final_angle]
+                        pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec, pos_current(2)+vec, pos_current(3),  obj.grip_vertical]);
                         obj.robotController.move_to_positions(pos);
-                        obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert, obj.grip_vertical]]);
+                        obj.robotController.move_to_positions([[position(1)+vec, position(2)+vec, obj.DOWN_level_vert, obj.grip_vertical]]);
                         obj.open_gripper();
-                        obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_vertical ]]);
+                        obj.robotController.move_to_positions([[position(1)+vec, position(2)+vec, obj.UP_level,obj.grip_vertical ]]);
                     end
                 end 
             end 
