@@ -35,8 +35,8 @@ classdef RobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 115200;
-        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
+        BAUDRATE                    = 4500000;
+        DEVICENAME                  = 'COM14';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -114,7 +114,7 @@ classdef RobotController
             % set speed
 %             with DRIVE = 4 and error = 50
           
-                obj.set_arm_speed_mode(100,100);
+                obj.set_arm_speed_mode(1000,100);
             % with drive = 0 and error < 20
 %             if len == 1
 %                 obj.set_arm_speed_mode(35,5);

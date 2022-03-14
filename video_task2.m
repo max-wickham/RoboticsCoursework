@@ -61,7 +61,7 @@
 controller = CubeController();
 controller.setup_controller();
 
-try
+% try
         start1 = [3,-8];
         start2 = [9,0];
         start3 = [6,6];
@@ -79,9 +79,9 @@ try
         controller.main_cube_stack(start3, finish4, 0, 3);
 
         controller.close_controller();
-
-   catch ME
-        controller.close_controller();
-        ME
-end 
+% 
+%    catch ME
+%         controller.close_controller();
+%         ME
+% end 
 clear all

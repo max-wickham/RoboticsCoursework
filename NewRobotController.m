@@ -35,8 +35,8 @@ classdef NewRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 115200;
-        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
+        BAUDRATE                    = 4500000;
+        DEVICENAME                  = 'COM14';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -377,12 +377,12 @@ classdef NewRobotController
         %and split the trajectory in smaller unevenly-distributed steps 
 
         function pos_array = trajectory(obj,current_pos, final_pos)
-            obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(1000,100);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
             final_pos = final_pos(1:3);
             delta_pos = final_pos-current_pos;
-            N = round(norm(delta_pos));
+            N = round(norm(delta_pos)*2);
             degree = 0.3;
             if mod(N,2) == 1
                 N = N+1;
@@ -433,14 +433,14 @@ classdef NewRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(1000,10);
+            obj.set_speed_arm(500,10);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 2*pi;
             end
             if current_pos(4) > pi
                 current_pos(4) = current_pos(4) - 2*pi;
             end
-            N = round(norm(final_pos(4) - current_pos(4)) * 10 / pi);
+            N = round(norm(final_pos(4) - current_pos(4)) * 40 / pi);
             positions = zeros(N,4);
             angles = linspace(current_pos(4), final_pos(4), N);
             for i = 1:N
