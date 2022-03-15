@@ -173,7 +173,8 @@ classdef CubeController
             %up
             %--current_pos = obj.robotController.get_current_position();
             current_pos = [cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle];
-            obj.robotController.move_to_positions([[current_pos(1), current_pos(2), obj.UP_level, current_pos(4)]]);
+            pos = trajectory(current_pos, [current_pos(1), current_pos(2), obj.UP_level, current_pos(4)]);
+            obj.robotController.move_to_positions(pos);
             %move
             vertical_cube_pos = [current_pos(1), current_pos(2), obj.UP_level, obj.grip_vertical];
             pos_array = obj.robotController.trajectory_angle([current_pos(1), current_pos(2), obj.UP_level, current_pos(4)], vertical_cube_pos);
@@ -435,7 +436,8 @@ classdef CubeController
             %up
             %--current_pos = obj.robotController.get_current_position();
             current_pos = [cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle];
-            obj.robotController.move_to_positions([[current_pos(1), current_pos(2), (obj.UP_level), current_pos(4)]]);
+            pos = trajectory(current_pos, [current_pos(1), current_pos(2), (obj.UP_level), current_pos(4)]);
+            obj.robotController.move_to_positions(pos);
             %move
             vertical_cube_pos = [current_pos(1), current_pos(2), (obj.UP_level), gripper_final_angle];
             pos_array = obj.robotController.trajectory_angle([current_pos(1), current_pos(2), (obj.UP_level), current_pos(4)], vertical_cube_pos);
