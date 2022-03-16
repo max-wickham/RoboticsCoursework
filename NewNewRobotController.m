@@ -7,10 +7,10 @@
 % position = robotController.get_current_position()
 %%%%%%%% clean up
 % robotController.close()
-classdef NewRobotController
+classdef NewNewRobotController
     properties
         robot_model = RobotModel()
-
+        scale = 1;
         port_num = 0
         lib_name = ''
         max_angle_error = 50%100
@@ -155,9 +155,11 @@ classdef NewRobotController
                 count = 0;
 
                 % write the servo goal
-                for i=1:4
+                len = length(servo_vals);
+                for i=1:len
                     write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
                 end
+                prev_diff = 0;
                 while 1
 
                     % find the current servo positions
@@ -168,9 +170,9 @@ classdef NewRobotController
                     end
                     diff = abs(norm(current_servo_vals-servo_vals));
 
-
+                    
                     % check if stopped moving
-                    if diff <= 1
+                    if abs(diff-prev_diff) <= 1
                         if count > 2
                             for i=1:4
                                 %write current position as goal position
@@ -193,6 +195,7 @@ classdef NewRobotController
                             end
                         end
                     end
+                    prev_diff = diff;
 
                     test = false
                     len = length(servo_vals);

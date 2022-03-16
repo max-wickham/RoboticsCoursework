@@ -1,6 +1,6 @@
 classdef CubeController
     properties
-        robotController = NewRobotController()
+        robotController = NewNewRobotController()
         open_servo_val = 2000
         closed_servo_val = 2460
         grip_inwards = -pi+0.04;
