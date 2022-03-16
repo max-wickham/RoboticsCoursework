@@ -108,11 +108,8 @@ classdef NewRobotController
             % !!
 
 
-            % Try 
 
             len = size(positions);
-
-
             % set speed
 %             with DRIVE = 4 and error = 50
             if len == 1
@@ -149,106 +146,71 @@ classdef NewRobotController
         end
 
         function move_servo_to_val(obj, servo_vals, adjust, correct)
-            % if adjust == false
-            %     start_time = tic;
-            %     len =length(servo_vals);
-            %     for i=1:len
-            %         write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
-            %     end
-            %     while 1
-            %         if toc(start_time) > 1.5
-            %             break
-            %         end
-            %         test = false
-            %         len = length(servo_vals);
-            %         for i=1:len
-            %             % check if not at correct position and if so continue
-            %             dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-            %             correct_position = abs(dxl_present_position - servo_vals(i)) < obj.max_angle_error;
-            %             if correct_position == false
-            %                 test = true
-            %             end
-            %             %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
-            %         end 
-            %         if test == false
-            %             break
-            %         end
-            %     end
-            % else
-                max_error = 10;
+
                 if correct == false
                     max_error = 100;
+                else
+                    max_error = 10;
                 end
                 count = 0;
-                current_servo_vals = zeros(1,4);
-                current_goal = servo_vals;
+
+                % write the servo goal
                 for i=1:4
-                    current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                end
-                diff = abs(norm(current_servo_vals-servo_vals));
-                if correct
-                    max_time = diff / 800
-                else
-                    max_time = diff / 800
-                end
-                start_time = tic;
-                len = length(servo_vals);
-                for i=1:len
                     write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
                 end
                 while 1
-                    if toc(start_time) > max_time
-                        for i=1:4
-                            current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                        end
-                        diff = abs(norm(current_servo_vals-servo_vals));
-                        max_time = diff / 800
+
+                    % find the current servo positions
+                    current_servo_vals = zeros(1,4);
+                    current_goal = servo_vals;
+                    for i=1:4
+                        current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+                    end
+                    diff = abs(norm(current_servo_vals-servo_vals));
+
+
+                    % check if stopped moving
+                    if diff <= 1
                         if count > 2
                             for i=1:4
-                                dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, dxl_present_position);
+                                %write current position as goal position
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
                             end
                             break
                         end
                         if correct == false
                             for i=1:4
-                                dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, dxl_present_position);
+                                %write current position as goal position
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
                             end
                             break
                         end
                         count = count + 1;
-                        start_time = tic;
                         for i =1:4
-                            dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                            current_goal(i) = dxl_present_position + 1.5*(servo_vals(i) - dxl_present_position);
-                            if abs(dxl_present_position - servo_vals(i)) > max_error
+                            current_goal(i) = current_servo_vals(i) + 1.5*(servo_vals(i) - current_servo_vals(i));
+                            if abs(current_servo_vals(i) - servo_vals(i)) > max_error
                                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_goal(i));
                             end
                         end
-                        
                     end
+
                     test = false
                     len = length(servo_vals);
                     for i=1:len
                         % check if not at correct position and if so continue
-                        dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                        correct_position = abs(dxl_present_position - servo_vals(i)) < max_error;
+                        correct_position = abs(current_servo_vals(i) - servo_vals(i)) < max_error;
                         if correct_position == false
                             test = true
                         end
-                        %write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
                     end 
                     if test == false
                         if correct == false
                         for i=1:4
-                            dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
-                            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, dxl_present_position);
+                            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
                         end
                         end
                         break
                     end
-                % end
             end
         end
 
