@@ -14,6 +14,7 @@ classdef NewRobotController
         port_num = 0
         lib_name = ''
         max_angle_error = 50%100
+        scale = 1
 
         %% ---- Control Table Addresses ---- %%
 
@@ -116,7 +117,7 @@ classdef NewRobotController
             % set speed
 %             with DRIVE = 4 and error = 50
             if len == 1
-                obj.set_arm_speed_mode(35,5);
+                obj.set_arm_speed_mode(20,3);
                 adjust = true;
             else
                 adjust = true;
@@ -138,9 +139,13 @@ classdef NewRobotController
 %                 servo_vals = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4))
 %                 obj.move_servo_to_val(servo_vals, adjust);
 
-                if (i-1) / len(1) < 0.2
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-                elseif (i) / len(1) > 0.8
+                if (i-1) / len(1) < 0.1
+%                     if len(1) == 1
+%                         obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+%                     else
+                        obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+%                     end
+                elseif (i) / len(1) > 0.9
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
                 else
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
@@ -154,6 +159,8 @@ classdef NewRobotController
                 %     obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
                 % end
             end
+            
+            obj.scale = 1;
         end
 
         function pos = get_current_position(obj)
@@ -204,9 +211,9 @@ classdef NewRobotController
                 end
                 diff = abs(norm(current_servo_vals-servo_vals));
                 if correct
-                    max_time = diff / 1500
+                    max_time = diff / 2300 * obj.scale;
                 else
-                    max_time = diff / 1500
+                    max_time = diff / 2300 * obj.scale;
                 end
                 start_time = tic;
                 len = length(servo_vals);
@@ -219,7 +226,7 @@ classdef NewRobotController
                             current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                         end
                         diff = abs(norm(current_servo_vals-servo_vals));
-                        max_time = diff / 600;
+                        max_time = diff / 800;
                         if count > 2
                             for i=1:4
                                 dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
@@ -237,10 +244,12 @@ classdef NewRobotController
                         count = count + 1;
                         start_time = tic;
                         for i =1:4
+                            if diff < 300
                             dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                             current_goal(i) = dxl_present_position + 1.5*(servo_vals(i) - dxl_present_position);
                             if abs(dxl_present_position - servo_vals(i)) > max_error
                                 write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_goal(i));
+                            end
                             end
                         end
                         
@@ -377,12 +386,12 @@ classdef NewRobotController
         %and split the trajectory in smaller unevenly-distributed steps 
 
         function pos_array = trajectory(obj,current_pos, final_pos)
-            obj.set_speed_arm(1000,200);
+            obj.set_speed_arm(400,50);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
             final_pos = final_pos(1:3);
             delta_pos = final_pos-current_pos;
-            N = round(norm(delta_pos)*2);
+            N = round(norm(delta_pos)*1);
             degree = 0.3;
             if mod(N,2) == 1
                 N = N+1;
@@ -433,7 +442,7 @@ classdef NewRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(500,50);
+            obj.set_speed_arm(1000,150);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 2*pi;
             end
