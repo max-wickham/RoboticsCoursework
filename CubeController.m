@@ -6,16 +6,17 @@ classdef CubeController
         grip_inwards = -pi+0.04;
         grip_outwards = -0.02;
         grip_vertical = -pi/2;
-        UP_level_vert = 10%5
-        DOWN_level_hor = 3.5%3.3 %3
-        UP_level = 8%5
-        DOWN_level_vert = 4.3%3.3 %3
+        UP_level_vert = 15 %8
+        DOWN_level_hor = 3.8%FLIPPING 3.5 
+        UP_level = 15 %5
+        DOWN_level_vert = 4%FLIPPING 4.3 
         grid_to_cm = 2.5
         max_range = 19.8
         min_range = 6
-        max_range_stack = 19.8
-        min_range_stack = 6
+        max_range_stack = 20
+        min_range_stack = 17.5
         flip_position = [7.5,-20 ] %0, 17.5
+        cube_height = 2.5
     end
     methods
 
@@ -172,7 +173,8 @@ classdef CubeController
             %up
             %--current_pos = obj.robotController.get_current_position();
             current_pos = [cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle];
-            obj.robotController.move_to_positions([[current_pos(1), current_pos(2), obj.UP_level, current_pos(4)]]);
+            pos = trajectory(current_pos, [current_pos(1), current_pos(2), obj.UP_level, current_pos(4)]);
+            obj.robotController.move_to_positions(pos);
             %move
             vertical_cube_pos = [current_pos(1), current_pos(2), obj.UP_level, obj.grip_vertical];
             pos_array = obj.robotController.trajectory_angle([current_pos(1), current_pos(2), obj.UP_level, current_pos(4)], vertical_cube_pos);
@@ -358,7 +360,7 @@ classdef CubeController
             obj.robotController.move_servo(5,obj.closed_servo_val);
         end
     
-        function main_cube_stack(obj,start_pos, finish_pos, flip_angle, stack_num)
+        function main_cube_stack(obj,start_pos, final_pos_grid, flip_angle, stack_num)
             %INPUTS
             %stack_num is cube number moved in finished pos
             if stack_num == 1
@@ -371,12 +373,12 @@ classdef CubeController
 
                 %***PROCESS***%
                 % convert to cm 
-                cube_pos = obj.grid_to_cm*cube_pos_grid;
+                cube_pos = obj.grid_to_cm*start_pos;
                 final_pos = obj.grid_to_cm*final_pos_grid;
 
                 %--check if angles are compatible with stacking
                 dir_init = obj.turnability(cube_pos);
-                [vert_stack, horiz_stack] = obj.turnability_stack(final_pos, stack_num);
+                [vert_stack, horiz_stack] = obj.turnability_stack(final_pos);
                  
                 if(vert_stack)
                         gripper_final_angle = obj.grip_vertical;
@@ -384,9 +386,10 @@ classdef CubeController
                 elseif(horiz_stack && dir_init(1))
                         gripper_final_angle = obj.grip_outwards;
                         gripper_initial_angle = obj.grip_outwards;   
-                else 
-                        message = 'need to use third position and flip cube first'
-                        
+                elseif(~dir_init(1))
+                            message = 'need to use third position and flip cube first'
+                            obj.reach_move_flip(cube_pos, obj.flip_position, obj.grip_vertical,obj.grip_vertical);
+                            obj.reach_move_flip_stack(obj.flip_position,final_pos,  obj.grip_outwards,obj.grip_outwards, stack_num);   
                 end   
                 
                 % gripper angle 
@@ -433,29 +436,32 @@ classdef CubeController
             %up
             %--current_pos = obj.robotController.get_current_position();
             current_pos = [cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle];
-            obj.robotController.move_to_positions([[current_pos(1), current_pos(2), (obj.UP_level+stack_num*obj.cube_height), current_pos(4)]]);
+            pos = trajectory(current_pos, [current_pos(1), current_pos(2), (obj.UP_level), current_pos(4)]);
+            obj.robotController.move_to_positions(pos);
             %move
-            vertical_cube_pos = [current_pos(1), current_pos(2), (obj.UP_level+stack_num*obj.cube_height), obj.grip_outwards];
-            pos_array = obj.robotController.trajectory_angle([current_pos(1), current_pos(2), (obj.UP_level+stack_num*obj.cube_height), current_pos(4)], vertical_cube_pos);
+            vertical_cube_pos = [current_pos(1), current_pos(2), (obj.UP_level), gripper_final_angle];
+            pos_array = obj.robotController.trajectory_angle([current_pos(1), current_pos(2), (obj.UP_level), current_pos(4)], vertical_cube_pos);
             obj.robotController.move_to_positions(pos_array);
-            up_cube_pos = [final_pos(1), final_pos(2), (obj.UP_level+stack_num*obj.cube_height), obj.grip_outwards];
+            vec = final_pos / norm(final_pos) * (stack_num-1)*0.1;
+            final_pos = final_pos - vec;
+            up_cube_pos = [final_pos(1), final_pos(2), (obj.UP_level), gripper_final_angle];
 %             pos_array = obj.robotController.trajectory(vertical_cube_pos, up_cube_pos);
 %             obj.robotController.move_to_positions(pos_array);
             obj.robotController.move_to_positions([up_cube_pos]);
-            orient_cube_pos = [final_pos(1), final_pos(2), (obj.UP_level+stack_num*obj.cube_height), gripper_final_angle];
-            pos_array = obj.robotController.trajectory_angle(up_cube_pos, orient_cube_pos);
-            obj.robotController.move_to_positions(pos_array);
+%             orient_cube_pos = [final_pos(1), final_pos(2), (obj.UP_level), gripper_final_angle];
+%             pos_array = obj.robotController.trajectory(up_cube_pos, orient_cube_pos);
+%             obj.robotController.move_to_positions(pos_array);
 
             %down
             if gripper_final_angle == obj.grip_vertical
-                DOWN = obj.DOWN_level_vert+stack_num*obj.cube_height;
+                DOWN = obj.DOWN_level_vert+(stack_num-1)*obj.cube_height;
             else
-                DOWN = obj.DOWN_level_hor+stack_num*obj.cube_height;
+                DOWN = obj.DOWN_level_hor+(stack_num-1)*obj.cube_height;
             end
             obj.robotController.move_to_positions([[final_pos(1), final_pos(2), DOWN, gripper_final_angle]]);
             obj.open_gripper();
             %up
-            obj.robotController.move_to_positions([[final_pos(1), final_pos(2),(obj.UP_level+stack_num*obj.cube_height) , gripper_final_angle]]);
+            obj.robotController.move_to_positions([[final_pos(1), final_pos(2),(obj.UP_level) , gripper_final_angle]]);
               
         end
 

@@ -114,7 +114,7 @@ classdef RobotController
             % set speed
 %             with DRIVE = 4 and error = 50
           
-                obj.set_arm_speed_mode(100,100);
+                obj.set_arm_speed_mode(1000,100);
             % with drive = 0 and error < 20
 %             if len == 1
 %                 obj.set_arm_speed_mode(35,5);

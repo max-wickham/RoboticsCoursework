@@ -204,9 +204,9 @@ classdef NewRobotController
                 end
                 diff = abs(norm(current_servo_vals-servo_vals));
                 if correct
-                    max_time = diff / 800
+                    max_time = diff / 1500
                 else
-                    max_time = diff / 800
+                    max_time = diff / 1500
                 end
                 start_time = tic;
                 len = length(servo_vals);
@@ -219,7 +219,7 @@ classdef NewRobotController
                             current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
                         end
                         diff = abs(norm(current_servo_vals-servo_vals));
-                        max_time = diff / 800
+                        max_time = diff / 600;
                         if count > 2
                             for i=1:4
                                 dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
@@ -377,12 +377,12 @@ classdef NewRobotController
         %and split the trajectory in smaller unevenly-distributed steps 
 
         function pos_array = trajectory(obj,current_pos, final_pos)
-            obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(1000,200);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
             final_pos = final_pos(1:3);
             delta_pos = final_pos-current_pos;
-            N = round(norm(delta_pos));
+            N = round(norm(delta_pos)*2);
             degree = 0.3;
             if mod(N,2) == 1
                 N = N+1;
@@ -433,14 +433,14 @@ classdef NewRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(1000,10);
+            obj.set_speed_arm(500,50);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 2*pi;
             end
             if current_pos(4) > pi
                 current_pos(4) = current_pos(4) - 2*pi;
             end
-            N = round(norm(final_pos(4) - current_pos(4)) * 10 / pi);
+            N = round(norm(final_pos(4) - current_pos(4)) * 4 / pi);
             positions = zeros(N,4);
             angles = linspace(current_pos(4), final_pos(4), N);
             for i = 1:N
