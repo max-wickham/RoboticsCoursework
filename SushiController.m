@@ -72,7 +72,7 @@ classdef SushiController
             obj.robotController.move_to_positions(obj.robotController.trajectory(obj.robotController.get_current_position(),pos));
             % close gripper
             obj.robotController.move_servo(5,obj.stick_gripper_close_val);
-            % move grippper in arc
+%             % move grippper in arc
             current_angle = obj.current_table_angle()
             delta_angle = mod(angle - current_angle + 2*pi,2*pi)
             num_steps = delta_angle * obj.steps_per_radian_circle_move
@@ -98,10 +98,13 @@ classdef SushiController
             for angle = angles_array
                 % ensure angle is in range 0-2*pi
                 angle = mod(angle + 2*pi, 2*pi)
-                pos = [obj.table_x_pos + sin(angle)*obj.stick_radius, cos(angle)*obj.stick_radius, obj.stick_down_height, -pi/2]
+                pos = [obj.table_x_pos + cos(angle)*obj.stick_radius, sin(angle)*obj.stick_radius, obj.stick_down_height, -pi/2]
                 pos_array = [ pos_array ; pos];
                 
             end
+%             figure()
+%             pos_t = transpose(pos_array)
+%             plot(pos_t(1, :), pos_t(2, :), 'o')
             obj.robotController.move_to_positions(pos_array)                                                              
             % update the current stick position
             pos = obj.robotController.get_current_position()
@@ -216,6 +219,7 @@ classdef SushiController
             theta = pi/2 + angle * -1
             rotation = [cos(theta),-1* sin(theta) ; sin(theta),cos(theta)]
             new_pos = [pos(1) - obj.table_x_pos,pos(2)]
+            new_pos = transpose(new_pos)
             new_pos = rotation * new_pos
             new_pos = [new_pos(1) + obj.table_x_pos, new_pos(2)]
         end

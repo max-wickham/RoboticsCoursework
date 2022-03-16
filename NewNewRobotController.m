@@ -113,7 +113,7 @@ classdef NewRobotController
             % set speed
 %             with DRIVE = 4 and error = 50
             if len == 1
-                obj.set_arm_speed_mode(35,5);
+                obj.set_arm_speed_mode(20,3);
                 adjust = true;
             else
                 adjust = true;
