@@ -36,7 +36,7 @@ classdef NewNewRobotController
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
         BAUDRATE                    = 115200;
-        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
+        DEVICENAME                  = 'COM14';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -128,7 +128,7 @@ classdef NewNewRobotController
             for i=1:len(1)
                 if (i-1) / len(1) < 0.2
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-                elseif (i) / len(1) > 0.8
+                elseif (i) / len(1) > 0.7
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
                 else
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
@@ -325,7 +325,7 @@ classdef NewNewRobotController
         %and split the trajectory in smaller unevenly-distributed steps 
 
         function pos_array = trajectory(obj,current_pos, final_pos)
-            obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(300,100); % obj.set_speed_arm(1000,500);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
             final_pos = final_pos(1:3);
@@ -349,7 +349,7 @@ classdef NewNewRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(1000,50);
+            obj.set_speed_arm(500,50);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 3*pi;
             end

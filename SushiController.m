@@ -9,40 +9,40 @@ classdef SushiController
         steps_per_radian_circle_move = 10
         table_x_pos = 15
         stick_radius = 7.5
-        stick_down_height = 4.6
+        stick_down_height = 3.6
         stick_up_height = 10
         stick_gripper_open_val = 2000
-        stick_gripper_close_val = 2700
+        stick_gripper_close_val = 2350
 
         rice_up_height = 10
-        rice_down_height = -1
+        rice_down_height = -2
         rice_gripper_open_val =1800
-        rice_gripper_close_val = 2720
+        rice_gripper_close_val = 2370
         plate_rice_up_height = 10
         plate_rice_down_height = 0.5
         
         weed_up_height = 10
         weed_down_height = -2
-        weed_gripper_open_val =1800
-        weed_gripper_close_val = 2720
-        grip_horizotal = -0.02;
-        plate_weed_up_height = 10
-        plate_weed_down_height = 0.5
+        weed_gripper_open_val = 1500
+        weed_gripper_close_val = 1850
+        grip_horizontal = -0.02;
+        plate_weed_up_height = 15
+        plate_weed_down_height = 8.5
         % -- ?
         weed_gripper_offsets = [4, 0,6]; %different tip of the gripper, offset w.r.t horizontal grip pos
 
-        salmon_up_height = 10
-        salmon_gripper_open_val = 2000
-        salmon_gripper_close_val = 2460
-        plate_salmon_up_height = 10
-        plate_salmon_down_height = 10
+        salmon_up_height = 15
+        salmon_gripper_open_val = 1500
+        salmon_gripper_close_val = 1800
+        plate_salmon_up_height = 15
+        plate_salmon_down_height = 8.5
         % -- ?
         salmon_gripper_offsets = [4, 0, 6];
         
         sushi_up_height = 10
         sushi_down_height = -1
         sushi_gripper_open_val =1800
-        sushi_gripper_close_val = 2720
+        sushi_gripper_close_val = 2370
         plate_sushi_up_height = 10
         plate_sushi_down_height = 0.5
 
@@ -183,21 +183,22 @@ classdef SushiController
         function grab_salmon(obj,pos)
             % pos = (x,y,z) position of salmon + offset new gripper
             %----? 
-            place_pos = pos + obj.salmon_gripper_offsets;
+            place_pos = pos ;
             %----?
             current_pos = obj.robotController.get_current_position();
-            pos_up = [pos(1), pos(2), obj.salmon_up_height, -pi/2l];                                           
-            obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos_up));
+            pos_up = [pos(1), pos(2), obj.salmon_up_height, -pi/2];                                           
+            obj.robotController.move_to_positions([pos_up]);
             obj.robotController.move_to_positions(obj.robotController.trajectory_angle(pos_up,[pos(1), pos(2), obj.salmon_up_height, obj.grip_horizontal] ));
             % open gripper
             obj.robotController.move_servo(5,obj.salmon_gripper_open_val);
             % move down
             current_pos = obj.robotController.get_current_position();
-            obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,place_pos));
+            salmon_place = [place_pos , obj.grip_horizontal];
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,salmon_place));
             % close gripper
-            obj.robotController.move_servo(5,obj.rice_gripper_close_val);   
+            obj.robotController.move_servo(5,obj.salmon_gripper_close_val);   
             % pos = (x,y,z) position of salmon
-            pos_up = [pos(1), pos(2), obj.salmon_gripper_close_val,  obj.grip_horizontal]; 
+            pos_up = [pos(1), pos(2), obj.salmon_up_height,  obj.grip_horizontal]; 
             current_pos = obj.robotController.get_current_position();                                          
             % robotController.move_to_positions([pos_up]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos_up));
@@ -207,11 +208,11 @@ classdef SushiController
             % pos = (x,y)
             % calculate new pos given rotation
             %----?  new gripper offsets
-            new_pos = obj.calculate_adjusted_pos(pos);
+            new_pos = pos;%obj.calculate_adjusted_pos(pos);
             %----?
             % move gripper above pos
             current_pos = obj.robotController.get_current_position();
-            pos = [new_pos(1), new_pos(2), obj.plate_salmon_up_height, curent_pos(4)];                                        
+            pos = [new_pos(1), new_pos(2), obj.plate_salmon_up_height, current_pos(4)];                                        
             % robotController.move_to_positions([pos]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));
             % move gripper down
@@ -231,21 +232,23 @@ classdef SushiController
         function grab_weed(obj,pos)
             % pos = (x,y,z) position of salmon + offset new gripper
             %----?
-            place_pos = pos + obj.weed_gripper_offsets;
+            place_pos = pos;
             %----?
             current_pos = obj.robotController.get_current_position();
-            pos_up = [pos(1), pos(2), obj.weed_up_height, -pi/2l];                                           
+            pos_up = [pos(1), pos(2), obj.weed_up_height, -pi/2];                                           
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos_up));
             obj.robotController.move_to_positions(obj.robotController.trajectory_angle(pos_up,[pos(1), pos(2), obj.weed_up_height, obj.grip_horizontal] ));
             % open gripper
             obj.robotController.move_servo(5,obj.weed_gripper_open_val);
             % move down
             current_pos = obj.robotController.get_current_position();
-            obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,place_pos));
+            pos_down = [place_pos(1), place_pos(2), place_pos(3), obj.grip_horizontal];
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos_down));
             % close gripper
             obj.robotController.move_servo(5,obj.rice_gripper_close_val);   
             % pos = (x,y,z) position of salmon
-            pos_up = [pos(1), pos(2), obj.weed_gripper_close_val,  obj.grip_horizontal]; 
+            current_pos = obj.robotController.get_current_position();
+            pos_up = [current_pos(1), current_pos(2), obj.weed_up_height,  obj.grip_horizontal]; 
             current_pos = obj.robotController.get_current_position();                                          
             % robotController.move_to_positions([pos_up]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos_up));
@@ -255,11 +258,11 @@ classdef SushiController
             % pos = (x,y)
             % calculate new pos given rotation
             %----?  new gripper offsets
-            new_pos = obj.calculate_adjusted_pos(pos);
+            new_pos = pos;%obj.calculate_adjusted_pos(pos);
             %----?
             % move gripper above pos
             current_pos = obj.robotController.get_current_position();
-            pos = [new_pos(1), new_pos(2), obj.plate_weed_up_height, curent_pos(4)];                                        
+            pos = [new_pos(1), new_pos(2), obj.plate_weed_up_height, current_pos(4)];                                        
             % robotController.move_to_positions([pos]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));
             % move gripper down
@@ -328,18 +331,18 @@ classdef SushiController
             %----PLACE TO SERVING PLATE
             
             % current_pos = robotController.get_current_position();
-            pos = [pos_place(1), pos_places(2), obj.plate_sushi_up_height, -pi/2];                                        
+            pos = [pos_place(1), pos_place(2), obj.plate_sushi_up_height, -pi/2];                                        
             obj.robotController.move_to_positions([pos]);
             % robotController.move_to_positions(trajectory(current_pos,pos));
             % move gripper down
-            pos = [pos_place(1), pos_places(2), obj.plate_sushi_down_height, -pi/2];  
+            pos = [pos_place(1), pos_place(2), obj.plate_sushi_down_height, -pi/2];  
             current_pos = obj.robotController.get_current_position();                                   
             % robotController.move_to_positions([pos]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));
             % open gripper
             obj.robotController.move_servo(5,obj.sushi_gripper_open_val);  
             % move gripper up
-            pos = [pos_place(1), pos_places(2), obj.plate_sushi_up_height, -pi/2];  
+            pos = [pos_place(1), pos_place(2), obj.plate_sushi_up_height, -pi/2];  
             current_pos = obj.robotController.get_current_position();                                         
             % robotController.move_to_positions([pos]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));

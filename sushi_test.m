@@ -1,6 +1,6 @@
 controller = SushiController();
 controller.setup_controller();
-controller.robotController.robot_model.kinematic_model.A3 = 12;
+controller.robotController.robot_model.kinematic_model.A3 = 14;
 controller.robotController.set_speed_gripper(35);
 % 
 % try
@@ -10,22 +10,22 @@ controller.robotController.set_speed_gripper(35);
 %     ME
 % %     
 % end
-controller.turn_table(-pi/2);
 
 controller.grab_rice([5,-15]);
-controller.place_rice([15,0]);
+controller.place_rice([14,0]);
 
-controller.grab_salmon([]);
-controller.place_salmon([]);
-
-controller.turn_table(-0.02);
-
-controller.grab_weed([]);
-controller.place_weed([]);
-
+% 
+controller.grab_salmon([17.8,17.8,4.5]);
+controller.place_salmon([20,0]);
+% % 
 controller.turn_table(-pi/2);
-
-controller.move_sushi(pos_gra, pos_place);
+% % 
+controller.grab_weed([0.01,20,4]);
+controller.place_weed([20,0]);
+% % 
+controller.turn_table(pi/2);
+% 
+controller.move_sushi([14,0], [17.5,-17.5]);
 
 controller.close_controller();
 
