@@ -28,7 +28,6 @@ classdef SushiController
         grip_horizotal = -0.02;
         plate_weed_up_height = 10
         plate_weed_down_height = 0.5
-        % -- ?
         weed_gripper_offsets = [4, 0,6]; %different tip of the gripper, offset w.r.t horizontal grip pos
 
         salmon_up_height = 10
@@ -36,15 +35,7 @@ classdef SushiController
         salmon_gripper_close_val = 2460
         plate_salmon_up_height = 10
         plate_salmon_down_height = 10
-        % -- ?
         salmon_gripper_offsets = [4, 0, 6];
-        
-        sushi_up_height = 10
-        sushi_down_height = -1
-        sushi_gripper_open_val =1800
-        sushi_gripper_close_val = 2720
-        plate_sushi_up_height = 10
-        plate_sushi_down_height = 0.5
 
     end
     methods
@@ -307,39 +298,43 @@ classdef SushiController
             % pos = (x,y)
             % move to pos above rice
             current_pos = obj.robotController.get_current_position();
-            pos = [pos_grab(1), pos_grab(2), obj.sushi_up_height, -pi/2];                                           
+            pos = [pos_grab(1), pos_grab(2), obj.rice_up_height, -pi/2];                                           
             % robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));
             obj.robotController.move_to_positions([pos]);
             % open gripper
-            obj.robotController.move_servo(5,obj.sushi_gripper_open_val);   
+            obj.robotController.move_servo(5,obj.rice_gripper_open_val);   
             % move down
             current_pos = obj.robotController.get_current_position();
-            pos = [pos(1), pos(2), obj.sushi_down_height, -pi/2];                                           
+            pos = [pos(1), pos(2), obj.rice_down_height, -pi/2];                                           
             % robotController.move_to_positions([pos]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));
             % close gripper
-            obj.robotController.move_servo(5,obj.sushi_gripper_close_val);   
+            obj.robotController.move_servo(5,obj.rice_gripper_close_val);   
             % move up
-            pos = [pos(1), pos(2), obj.sushi_up_height, -pi/2];           
+            pos = [pos(1), pos(2), obj.rice_up_height, -pi/2];           
             current_pos = obj.robotController.get_current_position();                             
             % robotController.move_to_positions([pos]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));
             
             %----PLACE TO SERVING PLATE
             
+            % pos = (x,y)
+            % calculate new pos given rotation
+            new_pos = obj.calculate_adjusted_pos(pos,obj.current_table_angle());
+            % move gripper above pos
             % current_pos = robotController.get_current_position();
-            pos = [pos_place(1), pos_places(2), obj.plate_sushi_up_height, -pi/2];                                        
+            pos = [new_pos(1), new_pos(2), obj.plate_rice_up_height, -pi/2];                                        
             obj.robotController.move_to_positions([pos]);
             % robotController.move_to_positions(trajectory(current_pos,pos));
             % move gripper down
-            pos = [pos_place(1), pos_places(2), obj.plate_sushi_down_height, -pi/2];  
+            pos = [new_pos(1), new_pos(2), obj.plate_rice_down_height, -pi/2];  
             current_pos = obj.robotController.get_current_position();                                   
             % robotController.move_to_positions([pos]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));
             % open gripper
-            obj.robotController.move_servo(5,obj.sushi_gripper_open_val);  
+            obj.robotController.move_servo(5,obj.rice_gripper_open_val);  
             % move gripper up
-            pos = [pos_place(1), pos_places(2), obj.plate_sushi_up_height, -pi/2];  
+            pos = [new_pos(1), new_pos(2), obj.plate_rice_up_height, -pi/2];  
             current_pos = obj.robotController.get_current_position();                                         
             % robotController.move_to_positions([pos]);
             obj.robotController.move_to_positions(obj.robotController.trajectory(current_pos,pos));

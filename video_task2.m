@@ -73,13 +73,13 @@ controller.setup_controller();
         
 %         controller.close_gripper();
 %         controller.open_gripper();
-        
+         
         controller.robotController.get_current_position()
         %can also just use reach and move
-        controller.main_cube(start1, finish4, flip_angle);
+%         controller.main_cube(start1, finish4, flip_angle);
         %try if horizontal in loc 4 works else fliponspot then stack
         controller.main_cube_stack(start2, finish4, 90, 2);
-        controller.main_cube_stack(start3, finish4_adj, 0, 3);
+%         controller.main_cube_stack(start3, finish4_adj, 0, 3);
 
         controller.close_controller();
 % 
