@@ -113,7 +113,7 @@ classdef NewNewRobotController
             % set speed
 %             with DRIVE = 4 and error = 50
             if len(1) == 1 %if len == 1
-                obj.set_arm_speed_mode(1000,500);%obj.set_arm_speed_mode(35,5);
+                obj.set_arm_speed_mode(700,500);%obj.set_arm_speed_mode(35,5);
                 adjust = true;
             else
                 adjust = true;
@@ -352,7 +352,7 @@ classdef NewNewRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(500,50);
+            obj.set_speed_arm(1000,500);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 3*pi;
             end
