@@ -7,7 +7,7 @@
 % position = robotController.get_current_position()
 %%%%%%%% clean up
 % robotController.close()
-classdef NewNewRobotController
+classdef SushiRobotController
     properties
         robot_model = RobotModel()
         scale = 1;
@@ -126,9 +126,9 @@ classdef NewNewRobotController
             end
                 
             for i=1:len(1)
-                if (i-1) / len(1) < 0.2
+                if (i-1) / len(1) < 0.1
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-                elseif (i) / len(1) > 0.7
+                elseif (i) / len(1) > 0.8
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
                 else
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
@@ -328,12 +328,12 @@ classdef NewNewRobotController
         %and split the trajectory in smaller unevenly-distributed steps 
 
         function pos_array = trajectory(obj,current_pos, final_pos)
-            obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(1000,300); % obj.set_speed_arm(1000,500);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
             final_pos = final_pos(1:3);
             delta_pos = final_pos-current_pos;
-            N = round(norm(delta_pos));
+            N = round(norm(delta_pos)/2);
             degree = 0.3;
             if mod(N,2) == 1
                 N = N+1;
@@ -352,7 +352,7 @@ classdef NewNewRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(500,50);
+            obj.set_speed_arm(1000,50);%obj.set_speed_arm(500,50);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 3*pi;
             end
