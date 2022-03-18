@@ -36,8 +36,8 @@ classdef NewRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 115200;
-        DEVICENAME                  = 'COM14';       % Check which port is being used on your controller
+        BAUDRATE                    = 1000000;
+        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque

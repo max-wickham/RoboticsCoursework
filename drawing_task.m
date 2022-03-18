@@ -1,7 +1,8 @@
 % draw three lines and circle
 controller = NewDrawingController();
 controller.setup_controller();
-controller.robotController.robotModel.kinematicModel.A3 = 11;
+controller.robotController.set_speed_gripper(200);
+controller.robotController.robot_model.kinematic_model.A3 = 11;
 % try
     controller.grab_pen();
     controller.draw_line([20,14], [20,6], 0, 1);
