@@ -283,7 +283,7 @@ classdef CubeController
                               angle_off = 0;
 %                           else 
 %                               vec = [0,0];
-                          %end
+                          %end  
                         %--pos_current = obj.robotController.get_current_position()
                         if norm(position) > 21.3
                             angle_off = 0.45;
