@@ -266,7 +266,7 @@ classdef CubeController
                         DOWN = obj.DOWN_level_vert;
                     else
                         DOWN = obj.DOWN_level_hor;
-                    end
+                    end 
                     obj.robotController.move_to_positions([[position(1), position(2), DOWN, gripper_final_angle]]);
                     obj.close_gripper();
                     %
