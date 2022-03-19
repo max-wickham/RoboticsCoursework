@@ -35,7 +35,7 @@ classdef SushiRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 1000000;
+        BAUDRATE                    = 115200;
         DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
@@ -89,7 +89,11 @@ classdef SushiRobotController
         function move_servo(obj, index, val)
             % sends a specific value directly to a servo, between 0 and 4096, should be used for controlling the gripper
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_GOAL_POSITION, val);   
+            start_time = tic;
             while 1
+                if toc(start_time) > 3
+                   break
+                end
                 dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_PRESENT_POSITION); 
                 not_correct_position = abs(dxl_present_position - val) > obj.max_angle_error;
                 if not_correct_position == false
