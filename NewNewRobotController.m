@@ -35,7 +35,7 @@ classdef NewNewRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 115200;
+        BAUDRATE                    = 3000000;
         DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
@@ -84,7 +84,7 @@ classdef NewNewRobotController
         function set_speed_gripper(obj,speed)
             write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 10, 0);
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 112, speed);
-            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 1);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 100);
         end
         function move_servo(obj, index, val)
             % sends a specific value directly to a servo, between 0 and 4096, should be used for controlling the gripper
@@ -130,6 +130,44 @@ classdef NewNewRobotController
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
                 elseif (i) / len(1) > 0.7
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+                else
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                end
+            end
+        end
+        
+        function move_to_positions_no_correct(obj, positions)
+            % moves the arm gripper to a series of positions,
+            % positions should be an array of arrays that each have 4 values, the x y z oordinate
+            % and then the angle in radians of the gripper
+            
+            % !! 
+            % set speed or time mode depending on positions length
+            % !!
+
+
+
+            len = size(positions);
+            % set speed
+%             with DRIVE = 4 and error = 50
+            if len(1) == 1 %if len == 1
+                obj.set_arm_speed_mode(700,500);%obj.set_arm_speed_mode(35,5);
+                adjust = true;
+            else
+                adjust = true;
+%                 obj.set_speed_arm(1000,500);
+            end
+
+            servo_vals = zeros(len(1),4);
+            for i=1:len(1)
+                servo_vals(i,:) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
+            end
+                
+            for i=1:len(1)
+                if (i-1) / len(1) < 0.2
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                elseif (i) / len(1) > 0.7
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
                 else
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
                 end

@@ -31,22 +31,25 @@
 
 %--2.b pick and flip and move--%
 % 
-controller = CubeController();
+controller = NewCubeController();
 controller.setup_controller();
+controller.robotController.set_speed_gripper(100);
 
 try
         start1 = [3*2.5,-8*2.5];
         start2 = [9*2.5,0];
-        start3 = [6*2.5,6*2.5];
+%         start2 = [9*2.5,0];
+        start3 = [6*2.5,-6*2.5];
         
         pos = controller.robotController.get_current_position()
         %move_up(pos)
         controller.open_gripper();
-        controller.flip_on_the_spot(start1, 90);
+%         controller.flip_on_the_spot(start1, 90);
         
-        controller.flip_on_the_spot(start2, 180);
+%         controller.flip_on_the_spot(start2, 270);
+controller.flip_09_270();
         %? need to move in different pos ?
-        controller.flip_on_the_spot(start3, 90);
+%          controller.flip_on_the_spot(start3, 270 );
 
         controller.close_controller();
 
