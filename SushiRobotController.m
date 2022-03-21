@@ -7,7 +7,7 @@
 % position = robotController.get_current_position()
 %%%%%%%% clean up
 % robotController.close()
-classdef NewNewRobotController
+classdef SushiRobotController
     properties
         robot_model = RobotModel()
         scale = 1;
@@ -35,7 +35,7 @@ classdef NewNewRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 3000000;
+        BAUDRATE                    = 115200;
         DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
@@ -84,12 +84,16 @@ classdef NewNewRobotController
         function set_speed_gripper(obj,speed)
             write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 10, 0);
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 112, speed);
-            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 100);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 1);
         end
         function move_servo(obj, index, val)
             % sends a specific value directly to a servo, between 0 and 4096, should be used for controlling the gripper
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_GOAL_POSITION, val);   
+            start_time = tic;
             while 1
+                if toc(start_time) > 3
+                   break
+                end
                 dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_PRESENT_POSITION); 
                 not_correct_position = abs(dxl_present_position - val) > obj.max_angle_error;
                 if not_correct_position == false
@@ -113,7 +117,7 @@ classdef NewNewRobotController
             % set speed
 %             with DRIVE = 4 and error = 50
             if len(1) == 1 %if len == 1
-                obj.set_arm_speed_mode(700,500);%obj.set_arm_speed_mode(35,5);
+                obj.set_arm_speed_mode(1000,500);%obj.set_arm_speed_mode(35,5);
                 adjust = true;
             else
                 adjust = true;
@@ -126,48 +130,10 @@ classdef NewNewRobotController
             end
                 
             for i=1:len(1)
-                if (i-1) / len(1) < 0.2
+                if (i-1) / len(1) < 0.1
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-                elseif (i) / len(1) > 0.7
+                elseif (i) / len(1) > 0.8
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-                else
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
-                end
-            end
-        end
-        
-        function move_to_positions_no_correct(obj, positions)
-            % moves the arm gripper to a series of positions,
-            % positions should be an array of arrays that each have 4 values, the x y z oordinate
-            % and then the angle in radians of the gripper
-            
-            % !! 
-            % set speed or time mode depending on positions length
-            % !!
-
-
-
-            len = size(positions);
-            % set speed
-%             with DRIVE = 4 and error = 50
-            if len(1) == 1 %if len == 1
-                obj.set_arm_speed_mode(700,500);%obj.set_arm_speed_mode(35,5);
-                adjust = true;
-            else
-                adjust = true;
-%                 obj.set_speed_arm(1000,500);
-            end
-
-            servo_vals = zeros(len(1),4);
-            for i=1:len(1)
-                servo_vals(i,:) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
-            end
-                
-            for i=1:len(1)
-                if (i-1) / len(1) < 0.2
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
-                elseif (i) / len(1) > 0.7
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
                 else
                     obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
                 end
@@ -366,12 +332,12 @@ classdef NewNewRobotController
         %and split the trajectory in smaller unevenly-distributed steps 
 
         function pos_array = trajectory(obj,current_pos, final_pos)
-            obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(1000,300); % obj.set_speed_arm(1000,500);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
             final_pos = final_pos(1:3);
             delta_pos = final_pos-current_pos;
-            N = round(norm(delta_pos));
+            N = round(norm(delta_pos)/2);
             degree = 0.3;
             if mod(N,2) == 1
                 N = N+1;
@@ -390,7 +356,7 @@ classdef NewNewRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(1000,50);%obj.set_speed_arm(500,50);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 3*pi;
             end

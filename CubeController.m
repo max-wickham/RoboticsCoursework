@@ -1,15 +1,15 @@
 classdef CubeController
     properties
-        robotController = NewRobotController()
+        robotController = NewNewRobotController()
         open_servo_val = 2000
-        closed_servo_val = 2460
+        closed_servo_val = 2500
         grip_inwards = -pi+0.04;
         grip_outwards = -0.02;
         grip_vertical = -pi/2;
         UP_level_vert = 15 %8
-        DOWN_level_hor = 3.8%FLIPPING 3.5 
+        DOWN_level_hor = 3.5%2A 3.8%FLIPPING 3.5 %2C 3.2
         UP_level = 15 %5
-        DOWN_level_vert = 4%FLIPPING 4.3 
+        DOWN_level_vert = 4.3%2A 4%FLIPPING 4.3 %2C 3.6
         grid_to_cm = 2.5
         max_range = 19.8
         min_range = 6
@@ -266,7 +266,7 @@ classdef CubeController
                         DOWN = obj.DOWN_level_vert;
                     else
                         DOWN = obj.DOWN_level_hor;
-                    end
+                    end 
                     obj.robotController.move_to_positions([[position(1), position(2), DOWN, gripper_final_angle]]);
                     obj.close_gripper();
                     %
@@ -282,8 +282,8 @@ classdef CubeController
                               vec = position / norm(position) * 0.6; 
                               angle_off = 0;
 %                           else 
-%                               vec = [0,0];
-                          %end
+%vec = [0,0];
+                          %end  
                         %--pos_current = obj.robotController.get_current_position()
                         if norm(position) > 21.3
                             angle_off = 0.45;

@@ -35,7 +35,7 @@ classdef RobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 115200;
+        BAUDRATE                    = 1000000;
         DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
