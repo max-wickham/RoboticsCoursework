@@ -113,7 +113,7 @@ classdef NewNewRobotController
             % set speed
 %             with DRIVE = 4 and error = 50
             if len(1) == 1 %if len == 1
-                obj.set_arm_speed_mode(700,500);%obj.set_arm_speed_mode(35,5);
+                obj.set_arm_speed_mode(400,300);%obj.set_arm_speed_mode(35,5);
                 adjust = true;
             else
                 adjust = true;
@@ -165,11 +165,11 @@ classdef NewNewRobotController
                 
             for i=1:len(1)
                 if (i-1) / len(1) < 0.2
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                    obj.move_servo_to_val_no_correct(servo_vals(i,:), adjust, 0);
                 elseif (i) / len(1) > 0.7
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                    obj.move_servo_to_val_no_correct(servo_vals(i,:), adjust, 0);
                 else
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                    obj.move_servo_to_val_no_correct(servo_vals(i,:), adjust, 0);
                 end
             end
         end
@@ -181,6 +181,81 @@ classdef NewNewRobotController
                 servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
             end
             pos = obj.robot_model.current_position(servo_vals);
+        end
+        
+        function move_servo_to_val_no_correct(obj, servo_vals, adjust, correct)
+
+                if correct == false
+                    max_error = 300;
+                else
+                    max_error = 10;
+                end
+                count = 0;
+
+                % write the servo goal
+                len = length(servo_vals);
+                for i=1:len
+                    write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
+                end
+                prev_diff = 0;
+                start_time = tic;
+                while 1
+                    if toc(start_time) > 3
+                        break
+                    end
+                    % find the current servo positions
+                    current_servo_vals = zeros(1,4);
+                    current_goal = servo_vals;
+                    for i=1:4
+                        current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+                    end
+                    diff = abs(norm(current_servo_vals-servo_vals));
+
+                    
+                    % check if stopped moving
+                    if abs(diff-prev_diff) <= 1
+                        if count > 2
+                            for i=1:4
+                                %write current position as goal position
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
+                            end
+                            break
+                        end
+                        if correct == false
+                            for i=1:4
+                                %write current position as goal position
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
+                            end
+                            break
+                        end
+                        count = count + 1;
+                        for i =1:4
+                            current_goal(i) = current_servo_vals(i) + 1.5*(servo_vals(i) - current_servo_vals(i));
+                            if abs(current_servo_vals(i) - servo_vals(i)) > max_error
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_goal(i));
+                            end
+                        end
+                    end
+                    prev_diff = diff;
+
+                    test = false
+                    len = length(servo_vals);
+                    for i=1:len
+                        % check if not at correct position and if so continue
+                        correct_position = abs(current_servo_vals(i) - servo_vals(i)) < max_error;
+                        if correct_position == false
+                            test = true
+                        end
+                    end 
+                    if test == false
+%                         if correct == false
+%                         for i=1:4
+%                             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
+%                         end
+%                         end
+                        break
+                    end
+            end
         end
 
         function move_servo_to_val(obj, servo_vals, adjust, correct)
@@ -366,12 +441,12 @@ classdef NewNewRobotController
         %and split the trajectory in smaller unevenly-distributed steps 
 
         function pos_array = trajectory(obj,current_pos, final_pos)
-            obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(600,100);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
             final_pos = final_pos(1:3);
             delta_pos = final_pos-current_pos;
-            N = round(norm(delta_pos));
+            N = round(norm(delta_pos)/6);
             degree = 0.3;
             if mod(N,2) == 1
                 N = N+1;
@@ -390,14 +465,14 @@ classdef NewNewRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(700,500);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 3*pi;
             end
             if current_pos(4) > pi
                 current_pos(4) = current_pos(4) - 2*pi;
             end
-            N = round(norm(final_pos(4) - current_pos(4)) * 4 / pi);
+            N = round(norm(final_pos(4) - current_pos(4)) * 5 / pi);
             positions = zeros(N,4);
             angles = linspace(current_pos(4), final_pos(4), N);
             for i = 1:N
