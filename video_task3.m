@@ -11,10 +11,12 @@ controller.robotController.robot_model.kinematic_model.A3 = 11;
 %     controller.draw_line([12.5-0.5,14+1], [20+0.5,14+1], 1, 1);
 %     controller.draw_circle_segment([20+0.5,10+0.5], 4, pi/2-0.01, -pi/2+0.1, 1, 0, 1);
 %     
-    controller.draw_line([20+0.8,14+1], [20+0.8,6+0.7], 0, 1);
-    controller.draw_line([20+0.8,6+0.7], [12.5,14+1], 1, 1);
-    controller.draw_line([12.5,14+1], [20+0.8,14+1], 1, 1);
-    controller.draw_circle_segment([20+0.5,10+1], 4, pi/2-0.01, -pi/2+0.23, 1, 0, 1);
+
+
+    % controller.draw_line([20+0.8,14+1], [20+0.8,6+0.7], 0, 1);
+    % controller.draw_line([20+0.8,6+0.7], [12.5,14+1], 1, 1);
+    % controller.draw_line([12.5,14+1], [20+0.8,14+1], 1, 1);
+    % controller.draw_circle_segment([20+0.5,10+1], 4, pi/2-0.01, -pi/2+0.23, 1, 0, 1);
     
     %controller.draw_circle_segment([15,10], 2, 0.01, -0.01, 0, 0, 0);
 %     controller.draw_line([18,14], [14,18], 0, 0);
