@@ -7,7 +7,7 @@
 % position = robotController.get_current_position()
 %%%%%%%% clean up
 % robotController.close()
-classdef SushiRobotController
+classdef DrawingRobotController
     properties
         robot_model = RobotModel()
         scale = 1;
@@ -35,9 +35,9 @@ classdef SushiRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 3000000;
+       BAUDRATE                    = 3000000;
         DEVICENAME                  = 'COM8';       % Check which port is being used on your controller
-                                                    % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
+                                                       % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
         TORQUE_DISABLE              = 0;            % Value for disabling the torque
@@ -84,16 +84,12 @@ classdef SushiRobotController
         function set_speed_gripper(obj,speed)
             write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 10, 0);
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 112, speed);
-            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 1);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 100);
         end
         function move_servo(obj, index, val)
             % sends a specific value directly to a servo, between 0 and 4096, should be used for controlling the gripper
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_GOAL_POSITION, val);   
-            start_time = tic;
             while 1
-                if toc(start_time) > 3
-                   break
-                end
                 dxl_present_position = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(index), obj.ADDR_PRO_PRESENT_POSITION); 
                 not_correct_position = abs(dxl_present_position - val) > obj.max_angle_error;
                 if not_correct_position == false
@@ -116,8 +112,45 @@ classdef SushiRobotController
             len = size(positions);
             % set speed
 %             with DRIVE = 4 and error = 50
+         if len(1) == 1
+                obj.set_speed_arm(1000,100);
+%                 obj.set_arm_speed_mode(35,5);
+            else
+%                 obj.set_speed_arm(500,10);
+         end
+            adjust = true;
+            servo_vals = zeros(len(1),4);
+            for i=1:len(1)
+                servo_vals(i,:) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));
+            end
+                
+            for i=1:len(1)
+                if (i-1) / len(1) < 0.2
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+                elseif (i) / len(1) > 0.7
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+                else
+                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                end
+            end
+        end
+        
+        function move_to_positions_no_correct(obj, positions)
+            % moves the arm gripper to a series of positions,
+            % positions should be an array of arrays that each have 4 values, the x y z oordinate
+            % and then the angle in radians of the gripper
+            
+            % !! 
+            % set speed or time mode depending on positions length
+            % !!
+
+
+
+            len = size(positions);
+            % set speed
+%             with DRIVE = 4 and error = 50
             if len(1) == 1 %if len == 1
-                obj.set_arm_speed_mode(1000,500);%obj.set_arm_speed_mode(35,5);
+                obj.set_arm_speed_mode(700,500);%obj.set_arm_speed_mode(35,5);
                 adjust = true;
             else
                 adjust = true;
@@ -130,12 +163,12 @@ classdef SushiRobotController
             end
                 
             for i=1:len(1)
-                if (i-1) / len(1) < 0.1
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
-                elseif (i) / len(1) > 0.8
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 1);
+                if (i-1) / len(1) < 0.2
+                    obj.move_servo_to_val_no_correct(servo_vals(i,:), adjust, 0);
+                elseif (i) / len(1) > 0.7
+                    obj.move_servo_to_val_no_correct(servo_vals(i,:), adjust, 0);
                 else
-                    obj.move_servo_to_val(servo_vals(i,:), adjust, 0);
+                    obj.move_servo_to_val_no_correct(servo_vals(i,:), adjust, 0);
                 end
             end
         end
@@ -147,6 +180,81 @@ classdef SushiRobotController
                 servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
             end
             pos = obj.robot_model.current_position(servo_vals);
+        end
+        
+        function move_servo_to_val_no_correct(obj, servo_vals, adjust, correct)
+
+                if correct == false
+                    max_error = 300;
+                else
+                    max_error = 10;
+                end
+                count = 0;
+
+                % write the servo goal
+                len = length(servo_vals);
+                for i=1:len
+                    write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, servo_vals(i));
+                end
+                prev_diff = 0;
+                start_time = tic;
+                while 1
+                    if toc(start_time) > 3
+                        break
+                    end
+                    % find the current servo positions
+                    current_servo_vals = zeros(1,4);
+                    current_goal = servo_vals;
+                    for i=1:4
+                        current_servo_vals(i) = read4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_PRESENT_POSITION); 
+                    end
+                    diff = abs(norm(current_servo_vals-servo_vals));
+
+                    
+                    % check if stopped moving
+                    if abs(diff-prev_diff) <= 1
+                        if count > 2
+                            for i=1:4
+                                %write current position as goal position
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
+                            end
+                            break
+                        end
+                        if correct == false
+                            for i=1:4
+                                %write current position as goal position
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
+                            end
+                            break
+                        end
+                        count = count + 1;
+                        for i =1:4
+                            current_goal(i) = current_servo_vals(i) + 1.5*(servo_vals(i) - current_servo_vals(i));
+                            if abs(current_servo_vals(i) - servo_vals(i)) > max_error
+                                write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_goal(i));
+                            end
+                        end
+                    end
+                    prev_diff = diff;
+
+                    test = false
+                    len = length(servo_vals);
+                    for i=1:len
+                        % check if not at correct position and if so continue
+                        correct_position = abs(current_servo_vals(i) - servo_vals(i)) < max_error;
+                        if correct_position == false
+                            test = true
+                        end
+                    end 
+                    if test == false
+%                         if correct == false
+%                         for i=1:4
+%                             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(i), obj.ADDR_PRO_GOAL_POSITION, current_servo_vals(i));
+%                         end
+%                         end
+                        break
+                    end
+            end
         end
 
         function move_servo_to_val(obj, servo_vals, adjust, correct)
@@ -332,12 +440,12 @@ classdef SushiRobotController
         %and split the trajectory in smaller unevenly-distributed steps 
 
         function pos_array = trajectory(obj,current_pos, final_pos)
-            obj.set_speed_arm(1000,300); % obj.set_speed_arm(1000,500);
+            obj.set_speed_arm(600,100);
             angle = final_pos(4);
             current_pos = current_pos(1:3);
             final_pos = final_pos(1:3);
             delta_pos = final_pos-current_pos;
-            N = round(norm(delta_pos)/2);
+            N = round(norm(delta_pos)/6);
             degree = 0.3;
             if mod(N,2) == 1
                 N = N+1;
@@ -356,14 +464,14 @@ classdef SushiRobotController
         function pos_array = trajectory_angle(obj,current_pos, final_pos)
             
             
-            obj.set_speed_arm(1000,50);%obj.set_speed_arm(500,50);
+            obj.set_speed_arm(700,500);
             if final_pos(4) > pi
                 final_pos(4) = final_pos(4) - 3*pi;
             end
             if current_pos(4) > pi
                 current_pos(4) = current_pos(4) - 2*pi;
             end
-            N = round(norm(final_pos(4) - current_pos(4)) * 4 / pi);
+            N = round(norm(final_pos(4) - current_pos(4)) * 5 / pi);
             positions = zeros(N,4);
             angles = linspace(current_pos(4), final_pos(4), N);
             for i = 1:N
