@@ -17,8 +17,8 @@ try
         %controller.main_cube(start1, finish4, flip_angle);
         %controller.reach_move_flip_higher( start1.*2.5, finish4.*2.5, -pi/2, -pi/2);
         controller.reach_move_flip( start1.*2.5, finish4_new.*2.5, 0.01, -pi/2);
-%         controller.main_cube(start2, finish5, flip_angle);
-%         controller.main_cube(start3, finish6, flip_angle);
+controller.main_cube(start2, finish5, flip_angle);
+controller.main_cube(start3, finish6, flip_angle);
 
         controller.close_controller();
 

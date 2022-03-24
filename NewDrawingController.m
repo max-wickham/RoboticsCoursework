@@ -10,7 +10,7 @@ classdef NewDrawingController
         steps_per_cm_circle = 6
         pen_pos_upper = [0,6*2.5,16]
         pen_pos_lower = [-1,6*2.5,0]
-        stretch_scale = 10000000000%14
+        stretch_scale = 12%1000000000%14
     end
 
     methods
