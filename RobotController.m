@@ -35,8 +35,8 @@ classdef RobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 1000000;
-        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
+        BAUDRATE                    = 3000000;
+        DEVICENAME                  = 'COM8';       % Check which port is being used on your controller
                                                     % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -84,7 +84,7 @@ classdef RobotController
         function set_speed_gripper(obj,speed)
             write1ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 10, 0);
             write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 112, speed);
-            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 1);
+            write4ByteTxRx(obj.port_num, obj.PROTOCOL_VERSION, obj.DXL_ID(5), 108, 100);
         end
         function move_servo(obj, index, val)
             % sends a specific value directly to a servo, between 0 and 4096, should be used for controlling the gripper
@@ -114,7 +114,7 @@ classdef RobotController
             % set speed
 %             with DRIVE = 4 and error = 50
           
-                obj.set_arm_speed_mode(1000,100);
+%                 obj.set_arm_speed_mode(1000,100);
             % with drive = 0 and error < 20
 %             if len == 1
 %                 obj.set_arm_speed_mode(35,5);
@@ -149,10 +149,11 @@ classdef RobotController
 
             % set speed
 %             with DRIVE = 4 and error = 50
-            if len == 1
-                obj.set_arm_speed_mode(35,5);
+            if len(1) == 1
+                obj.set_speed_arm(1000,100);
+%                 obj.set_arm_speed_mode(35,5);
             else
-                obj.set_speed_arm(500,10);
+%                 obj.set_speed_arm(500,10);
             end
             % with drive = 0 and error < 20
 %             if len == 1

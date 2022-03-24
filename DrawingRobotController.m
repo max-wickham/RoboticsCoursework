@@ -7,7 +7,7 @@
 % position = robotController.get_current_position()
 %%%%%%%% clean up
 % robotController.close()
-classdef NewNewRobotController
+classdef DrawingRobotController
     properties
         robot_model = RobotModel()
         scale = 1;
@@ -35,9 +35,9 @@ classdef NewNewRobotController
         DXL_ID3                      = 13;            % Dynamixel ID: ELBOW
         DXL_ID4                      = 14;            % Dynamixel ID: WRIST
         DXL_ID5                      = 15;            % Dynamixel ID: HAND
-        BAUDRATE                    = 3000000;
-        DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
-                                                    % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
+       BAUDRATE                    = 3000000;
+        DEVICENAME                  = 'COM8';       % Check which port is being used on your controller
+                                                       % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                                     
         TORQUE_ENABLE               = 1;            % Value for enabling the torque
         TORQUE_DISABLE              = 0;            % Value for disabling the torque
@@ -112,14 +112,13 @@ classdef NewNewRobotController
             len = size(positions);
             % set speed
 %             with DRIVE = 4 and error = 50
-            if len(1) == 1 %if len == 1
-                obj.set_arm_speed_mode(400,300);%obj.set_arm_speed_mode(35,5);
-                adjust = true;
+         if len(1) == 1
+                obj.set_speed_arm(1000,100);
+%                 obj.set_arm_speed_mode(35,5);
             else
-                adjust = true;
-%                 obj.set_speed_arm(1000,500);
-            end
-
+%                 obj.set_speed_arm(500,10);
+         end
+            adjust = true;
             servo_vals = zeros(len(1),4);
             for i=1:len(1)
                 servo_vals(i,:) = obj.robot_model.servo_vals(positions(i, 1:3),positions(i,4));

@@ -10,7 +10,7 @@ classdef NewDrawingController
         steps_per_cm_circle = 6
         pen_pos_upper = [0,6*2.5,16]
         pen_pos_lower = [-1,6*2.5,0]
-        stretch_scale = 100000
+        stretch_scale = 10000000000%14
     end
 
     methods
@@ -37,13 +37,16 @@ classdef NewDrawingController
             % Grab pen
             % Lift pen
             % Rotate pen
+            obj.robotController.set_arm_speed_mode(1000,100);
             obj.robotController.move_to_positions([[obj.pen_pos_upper obj.pen_pick_angle]]);
             obj.robotController.move_servo(5,obj.open_value);
             pos_array = trajectory([obj.pen_pos_upper obj.pen_pick_angle],[obj.pen_pos_lower obj.pen_pick_angle])
+            obj.robotController.set_arm_speed_mode(200,10);
             obj.robotController.move_to_positions(pos_array);
             obj.robotController.move_servo(5,obj.close_value);
             obj.robotController.move_to_positions([[obj.pen_pos_upper obj.pen_pick_angle]]);
             pos_array = trajectory_angle([obj.pen_pos_upper obj.pen_pick_angle], [obj.pen_pos_upper obj.grip_angle]);
+            obj.robotController.set_arm_speed_mode(600,1);
             obj.robotController.move_to_positions(pos_array);
         end
 
@@ -52,6 +55,7 @@ classdef NewDrawingController
             % Move down to draw start
             % Draw line
             % Lift back up 
+            obj.robotController.set_arm_speed_mode(1000,100);
             lower_start_pos = [start_pos(1), start_pos(2), obj.lower_height, obj.grip_angle];
             lower_end_pos = [end_pos(1), end_pos(2), obj.lower_height, obj.grip_angle];
 
@@ -84,7 +88,7 @@ classdef NewDrawingController
             % Move down to draw start
             % Draw segment
             % Lift back up 
-            
+            obj.robotController.set_arm_speed_mode(1000,100);
             start_pos = [center(1)+cos(start_angle)*radius, center(2)+sin(start_angle)*radius];
             end_pos = [center(1)+cos(end_angle)*radius, center(2)+sin(end_angle)*radius];
 

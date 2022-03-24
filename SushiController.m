@@ -21,10 +21,11 @@ classdef SushiController
         plate_rice_up_height = 10
         plate_rice_down_height = 0.5
         
+        %width 2.7, 3.5 height ish vat kind of region
         weed_up_height = 15
-        weed_down_height = 7.5
+        weed_down_height = 6.2
         weed_gripper_open_val = 1450
-        weed_gripper_close_val = 1750
+        weed_gripper_close_val = 1800
         grip_horizontal = -0.02;
         plate_weed_up_height = 15
         plate_weed_down_height = 11
@@ -34,7 +35,7 @@ classdef SushiController
         salmon_up_height = 15
         salmon_gripper_open_val = 1500
         salmon_gripper_close_val = 1850
-        plate_salmon_up_height = 15
+        plate_salmon_up_height = 14
         plate_salmon_down_height = 11
         % -- ?
         salmon_gripper_offsets = [4, 0, 6];

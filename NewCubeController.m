@@ -150,16 +150,16 @@ classdef NewCubeController
             %---current_pos = obj.robotController.get_current_position();
             current_pos = obj.robotController.get_current_position()%[5,0, obj.UP_level_vert, obj.grip_vertical];
             %up
-            obj.robotController.move_to_positions([[current_pos(1), current_pos(2), obj.UP_level_vert, current_pos(4)]]);           
+            obj.robotController.move_to_positions_no_correct([[current_pos(1), current_pos(2), obj.UP_level_vert, current_pos(4)]]);           
             %reach
             up_grip_pos = [cube_pos(1), cube_pos(2), obj.UP_level_vert,obj.grip_vertical ];
 %             pos_array = obj.robotController.trajectory(current_pos, up_grip_pos);
 %             obj.robotController.move_to_positions(pos_array);
             obj.robotController.scale = 0.6;
-            obj.robotController.move_to_positions([up_grip_pos]);
+            obj.robotController.move_to_positions_no_correct([up_grip_pos]);
             orient_grip_pos = [cube_pos(1), cube_pos(2), obj.UP_level_vert, gripper_initial_angle];
             pos_array = obj.robotController.trajectory_angle(up_grip_pos, orient_grip_pos); %angle obj.robotController.traj
-            obj.robotController.move_to_positions(pos_array);
+            obj.robotController.move_to_positions_no_correct(pos_array);
             %down
             if gripper_initial_angle == obj.grip_vertical
                 DOWN = obj.DOWN_level_vert;
@@ -174,21 +174,21 @@ classdef NewCubeController
             %up
             %--current_pos = obj.robotController.get_current_position();
             current_pos = [cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle];
-            pos = trajectory(current_pos, [current_pos(1), current_pos(2),  current_pos(3)+1 , current_pos(4)]);
-            obj.robotController.move_to_positions(pos);
-            obj.robotController.move_to_positions([current_pos(1), current_pos(2),  obj.UP_level , current_pos(4)]);
+%             pos = trajectory(current_pos, [current_pos(1), current_pos(2),  current_pos(3)+1 , current_pos(4)]);
+%             obj.robotController.move_to_positions(pos);
+            obj.robotController.move_to_positions_no_correct([current_pos(1), current_pos(2),  obj.UP_level , current_pos(4)]);
             %move
             vertical_cube_pos = [current_pos(1), current_pos(2), obj.UP_level, obj.grip_vertical];
             pos_array = obj.robotController.trajectory_angle([current_pos(1), current_pos(2), obj.UP_level, current_pos(4)], vertical_cube_pos);
-            obj.robotController.move_to_positions(pos_array);
+            obj.robotController.move_to_positions_no_correct(pos_array);
             up_cube_pos = [final_pos(1), final_pos(2), obj.UP_level, obj.grip_vertical];
 %             pos_array = obj.robotController.trajectory(vertical_cube_pos, up_cube_pos);
 %             obj.robotController.move_to_positions(pos_array);
             obj.robotController.scale = 0.6;
-            obj.robotController.move_to_positions([up_cube_pos]);
+            obj.robotController.move_to_positions_no_correct([up_cube_pos]);
             orient_cube_pos = [final_pos(1), final_pos(2), obj.UP_level, gripper_final_angle];
             pos_array = obj.robotController.trajectory_angle(up_cube_pos, orient_cube_pos);
-            obj.robotController.move_to_positions(pos_array);
+            obj.robotController.move_to_positions_no_correct(pos_array);
 
             %down
             if gripper_final_angle == obj.grip_vertical
@@ -199,7 +199,7 @@ classdef NewCubeController
             obj.robotController.move_to_positions([[final_pos(1), final_pos(2), DOWN, gripper_final_angle]]);
             obj.open_gripper();
             %up
-            obj.robotController.move_to_positions([[final_pos(1), final_pos(2), obj.UP_level, gripper_final_angle]]);
+            obj.robotController.move_to_positions_no_correct([[final_pos(1), final_pos(2), obj.UP_level, gripper_final_angle]]);
                 
         end  
 
@@ -394,12 +394,12 @@ classdef NewCubeController
         end
 
         function open_gripper(obj)
-            obj.robotController.set_speed_gripper(500);
+            obj.robotController.set_speed_gripper(39);
             obj.robotController.move_servo(5,obj.open_servo_val);
         end
 
         function close_gripper(obj)
-            obj.robotController.set_speed_gripper(35);
+            obj.robotController.set_speed_gripper(75);
             obj.robotController.move_servo(5,obj.closed_servo_val);
         end
     
@@ -457,16 +457,16 @@ classdef NewCubeController
             %---current_pos = obj.robotController.get_current_position();
             current_pos = obj.robotController.get_current_position()%[5,0, obj.UP_level_vert, obj.grip_vertical];
             %up
-            obj.robotController.move_to_positions([[current_pos(1), current_pos(2), obj.UP_level_vert, current_pos(4)]]);           
+            obj.robotController.move_to_positions_no_correct([[current_pos(1), current_pos(2), obj.UP_level_vert, current_pos(4)]]);           
             %reach
             up_grip_pos = [cube_pos(1), cube_pos(2), obj.UP_level_vert,obj.grip_vertical ];
 %             pos_array = obj.robotController.trajectory(current_pos, up_grip_pos);
 %             obj.robotController.move_to_positions(pos_array);
             obj.robotController.scale = 0.6;
-            obj.robotController.move_to_positions([up_grip_pos]);
+            obj.robotController.move_to_positions_no_correct([up_grip_pos]);
             orient_grip_pos = [cube_pos(1), cube_pos(2), obj.UP_level_vert, gripper_initial_angle];
             pos_array = obj.robotController.trajectory_angle(up_grip_pos, orient_grip_pos); %angle obj.robotController.traj
-            obj.robotController.move_to_positions(pos_array);
+            obj.robotController.move_to_positions_no_correct(pos_array);
             %down
             if gripper_initial_angle == obj.grip_vertical
                 DOWN = obj.DOWN_level_vert;
@@ -480,20 +480,20 @@ classdef NewCubeController
             %up
             %--current_pos = obj.robotController.get_current_position();
             current_pos = [cube_pos(1), cube_pos(2), DOWN, gripper_initial_angle];
-            pos = trajectory(current_pos, [current_pos(1), current_pos(2),  current_pos(3)+1 , current_pos(4)]);
-            obj.robotController.move_to_positions(pos);
-            obj.robotController.move_to_positions([current_pos(1), current_pos(2),  obj.UP_level , current_pos(4)]);
+%             pos = trajectory(current_pos, [current_pos(1), current_pos(2),  current_pos(3)+1 , current_pos(4)]);
+%             obj.robotController.move_to_positions(pos);
+            obj.robotController.move_to_positions_no_correct([current_pos(1), current_pos(2),  obj.UP_level , current_pos(4)]);
             %move
             vertical_cube_pos = [current_pos(1), current_pos(2), (obj.UP_level), gripper_final_angle];
             pos_array = obj.robotController.trajectory_angle([current_pos(1), current_pos(2), (obj.UP_level), current_pos(4)], vertical_cube_pos);
-            obj.robotController.move_to_positions(pos_array);
+            obj.robotController.move_to_positions_no_correct(pos_array);
             vec = final_pos / norm(final_pos) * (stack_num-1)*0.1;
             final_pos = final_pos - vec;
             up_cube_pos = [final_pos(1), final_pos(2), (obj.UP_level), gripper_final_angle];
 %             pos_array = obj.robotController.trajectory(vertical_cube_pos, up_cube_pos);
 %             obj.robotController.move_to_positions(pos_array);
             obj.robotController.scale = 0.6;
-            obj.robotController.move_to_positions([up_cube_pos]);
+            obj.robotController.move_to_positions_no_correct([up_cube_pos]);
 %             orient_cube_pos = [final_pos(1), final_pos(2), (obj.UP_level), gripper_final_angle];
 %             pos_array = obj.robotController.trajectory(up_cube_pos, orient_cube_pos);
 %             obj.robotController.move_to_positions(pos_array);
@@ -512,42 +512,49 @@ classdef NewCubeController
             obj.robotController.move_to_positions([[final_pos(1), final_pos(2), DOWN, gripper_final_angle]]);
             obj.open_gripper();
             %up
-            obj.robotController.move_to_positions([[final_pos(1), final_pos(2),(obj.UP_level) , gripper_final_angle]]);
+            obj.robotController.move_to_positions_no_correct([[final_pos(1), final_pos(2),(obj.UP_level) , gripper_final_angle]]);
               
         end
         
-        function flip_09_90(obj)
+        function flip_90_90(obj)
             position = [9*2.5,0];
             DOWN = obj.DOWN_level_vert;
             gripper_final_angle = -pi/2;
-            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, obj.grip_vertical],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
             obj.robotController.move_to_positions_no_correct(pos);
             
             obj.robotController.move_to_positions([[position(1), position(2), DOWN - 0.7, gripper_final_angle]]);
             obj.close_gripper();
             obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
-            vec = position / norm(position) * 1.2; 
+            vec = position / norm(position) * 1.1; 
             angle_off = 0.45;
-            down_off = -0.4;
+            down_off = -0.6;
             pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
             pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical]);
             obj.robotController.move_to_positions_no_correct(pos);
             obj.robotController.move_to_positions_no_correct(obj.robotController.trajectory_angle(pos_current,[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]));
-            obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]]);
+            
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2)+0.1, obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]));
             obj.open_gripper();
             obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]]);
                              
         end
         
-        function flip_09_270(obj)
+        function flip_90_270(obj)
             position = [9*2.5,0];
             DOWN = obj.DOWN_level_hor;
             gripper_final_angle = 0.02;
-            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, obj.grip_vertical],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
             obj.robotController.move_to_positions_no_correct(pos);
        
             vec = position / norm(position) * 0.4; 
-            obj.robotController.move_to_positions([[position(1), position(2), DOWN, gripper_final_angle]]);
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1), position(2), DOWN, gripper_final_angle]));
             obj.close_gripper();  
             obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
             vec = position / norm(position) * 1.3; 
@@ -556,7 +563,234 @@ classdef NewCubeController
             pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
             pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical+ angle_off]);
             obj.robotController.move_to_positions_no_correct(pos);
+            
+            
+            obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_vertical+ angle_off]]);
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_vertical+angle_off ]]);
+                    
+        end
+        
+        function flip_80_270(obj)
+            position = [8*2.5,0];
+            DOWN = obj.DOWN_level_hor;
+            gripper_final_angle = 0.02;
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+       
+            vec = position / norm(position) * 0.4; 
+%             obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), DOWN+0.6, gripper_final_angle]]);
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), DOWN+0.6, gripper_final_angle]));
+            obj.close_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.8; 
+            angle_off = 0
+            down_off = -0.6;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical+ angle_off]);
+            obj.robotController.move_to_positions_no_correct(pos);
 
+            obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_vertical+ angle_off]]);
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_vertical+angle_off ]]);       
+        end
+        
+        
+        
+        function flip_80_90(obj)
+            position = [8*2.5,0];
+            DOWN = obj.DOWN_level_vert;
+            gripper_final_angle = -pi/2;
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            
+            obj.robotController.move_to_positions([[position(1), position(2), DOWN - 0.9, gripper_final_angle]]);
+            obj.close_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.7; 
+            angle_off = 0
+            down_off = -0.9;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            obj.robotController.move_to_positions_no_correct(obj.robotController.trajectory_angle(pos_current,[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]));
+            
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]));
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]]);
+                             
+        end
+        
+        
+        function flip_6_6_90(obj)
+            position = [6*2.5,-6*2.5];
+            DOWN = obj.DOWN_level_vert;
+            gripper_final_angle = -pi/2;
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            
+            obj.robotController.move_to_positions([[position(1), position(2), DOWN - 0.7, gripper_final_angle]]);
+            obj.close_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.7; 
+            angle_off = 0.45;
+            down_off = -1.5;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            obj.robotController.move_to_positions_no_correct(obj.robotController.trajectory_angle(pos_current,[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]));
+            
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]));
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]]);
+                             
+        end
+        
+        
+        function flip_6_6_270(obj)
+            position = [6*2.5,-6*2.5];
+            DOWN = obj.DOWN_level_hor;
+            gripper_final_angle = 0.02;
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+       
+            vec = position / norm(position) * 0.4; 
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1), position(2), DOWN, gripper_final_angle]));
+            obj.close_gripper();  
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.7; 
+            angle_off = 0;
+            down_off = 0;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical+ angle_off]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            
+            
+            obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_vertical+ angle_off]]);
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_vertical+angle_off ]]);
+                    
+        end
+        
+        
+        function flip_3_8_90(obj)
+            position = [3*2.5,-8*2.5];
+            DOWN = obj.DOWN_level_vert;
+            gripper_final_angle = -pi/2;
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            
+            obj.robotController.move_to_positions([[position(1), position(2), DOWN - 0.7, gripper_final_angle]]);
+            obj.close_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.6; 
+            angle_off = 0.45;
+            down_off = -1;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            obj.robotController.move_to_positions_no_correct(obj.robotController.trajectory_angle(pos_current,[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]));
+            
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]));
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]]);
+                             
+        end
+        
+        function flip_3_8_270(obj)
+            position = [3*2.5,-8*2.5];
+            DOWN = obj.DOWN_level_hor;
+            gripper_final_angle = 0.02;
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+       
+            vec = position / norm(position) * 0.4; 
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1), position(2), DOWN, gripper_final_angle]));
+            obj.close_gripper();  
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 1; 
+            angle_off = 0.35;
+            down_off = 0;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical+ angle_off]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            
+            
+            obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_vertical+ angle_off]]);
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_vertical+angle_off ]]);
+                    
+        end
+        
+        
+        function flip_66_90(obj)
+            position = [5.95*2.5,6.05*2.5];
+            DOWN = obj.DOWN_level_vert;
+            gripper_final_angle = -pi/2;
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            
+            obj.robotController.move_to_positions([[position(1), position(2), DOWN - 0.7, gripper_final_angle]]);
+            obj.close_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.5; 
+            angle_off = 0.45;
+            down_off = -1.5;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            obj.robotController.move_to_positions_no_correct(obj.robotController.trajectory_angle(pos_current,[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]));
+            
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]));
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]]);
+                             
+        end
+        
+        
+        function flip_66_270(obj)
+            position = [6*2.5,6*2.5];
+            DOWN = obj.DOWN_level_hor;
+            gripper_final_angle = 0.02;
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+       
+            vec = position / norm(position) * 0.4; 
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1), position(2), DOWN+0.1, gripper_final_angle]));
+            obj.close_gripper();  
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.5; 
+            angle_off = 0;
+            down_off = 0;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical+ angle_off]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            
+            
             obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_vertical+ angle_off]]);
             obj.open_gripper();
             obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_vertical+angle_off ]]);
@@ -564,19 +798,23 @@ classdef NewCubeController
         end
         
         function flip_08_270(obj)
-            position = [8*2.5,0];
+            position = [0*2.5,8*2.5];
             DOWN = obj.DOWN_level_hor;
             gripper_final_angle = 0.02;
-            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, obj.grip_vertical],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
             obj.robotController.move_to_positions_no_correct(pos);
        
             vec = position / norm(position) * 0.4; 
-            obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), DOWN+0.6, gripper_final_angle]]);
+%             obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), DOWN+0.6, gripper_final_angle]]);
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), DOWN+0.6, gripper_final_angle]));
             obj.close_gripper();
             obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
-            vec = position / norm(position) * 0.9; 
+            vec = position / norm(position) * 0.5; 
             angle_off = 0
-            down_off = -0.35;
+            down_off = -0.6;
             pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
             pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical+ angle_off]);
             obj.robotController.move_to_positions_no_correct(pos);
@@ -589,28 +827,88 @@ classdef NewCubeController
         
         
         function flip_08_90(obj)
-            position = [8*2.5,0];
+            position = [0*2.5,8*2.5];
             DOWN = obj.DOWN_level_vert;
             gripper_final_angle = -pi/2;
-            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, obj.grip_vertical],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
             obj.robotController.move_to_positions_no_correct(pos);
             
             obj.robotController.move_to_positions([[position(1), position(2), DOWN - 0.9, gripper_final_angle]]);
             obj.close_gripper();
             obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
-            vec = position / norm(position) * 0.5; 
+            vec = position / norm(position) * 0.6; 
             angle_off = 0
             down_off = -0.9;
             pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
             pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical]);
             obj.robotController.move_to_positions_no_correct(pos);
             obj.robotController.move_to_positions_no_correct(obj.robotController.trajectory_angle(pos_current,[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]));
-            obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]]);
+            
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]));
             obj.open_gripper();
             obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]]);
                              
         end
+        
+        
+        function flip_0_8_270(obj)
+            position = [0*2.5,-8*2.5];
+            DOWN = obj.DOWN_level_hor;
+            gripper_final_angle = 0.02;
+            current = obj.robotController.robotController.get_current_position();
+                        obj.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+       
+            vec = position / norm(position) * 0.4; 
+%             obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), DOWN+0.6, gripper_final_angle]]);
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), DOWN+0.6, gripper_final_angle]));
+            obj.close_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.7; 
+            angle_off = 0
+            down_off = -0.6;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical+ angle_off]);
+            obj.robotController.move_to_positions_no_correct(pos);
 
+            obj.robotController.move_to_positions([[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_vertical+ angle_off]]);
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_vertical+angle_off ]]);       
+        end
+        
+        
+        
+        function flip_0_8_90(obj)
+            position = [0*2.5,-8*2.5];
+            DOWN = obj.DOWN_level_vert;
+            gripper_final_angle = -pi/2;
+            current = obj.robotController.get_current_position();
+                        obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, current(4)]]);
+            pos = obj.robotController.trajectory_angle([position(1), position(2), obj.UP_level, current(4)],[position(1), position(2), obj.UP_level, gripper_final_angle]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            
+            obj.robotController.move_to_positions([[position(1), position(2), DOWN - 0.9, gripper_final_angle]]);
+            obj.close_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1), position(2), obj.UP_level, gripper_final_angle]]);
+            vec = position / norm(position) * 0.7; 
+            angle_off = 0
+            down_off = -0.9;
+            pos_current = [position(1)+vec(1), position(2)+vec(2), obj.UP_level, gripper_final_angle]
+            pos = obj.robotController.trajectory_angle(pos_current,[pos_current(1)+vec(1), pos_current(2)+vec(2), pos_current(3),  obj.grip_vertical]);
+            obj.robotController.move_to_positions_no_correct(pos);
+            obj.robotController.move_to_positions_no_correct(obj.robotController.trajectory_angle(pos_current,[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]));
+            
+            current = obj.robotController.get_current_position();
+            obj.robotController.move_to_positions(obj.robotController.trajectory(current,[position(1)+vec(1), position(2)+vec(2), obj.DOWN_level_vert+0.3+down_off, obj.grip_outwards]));
+            obj.open_gripper();
+            obj.robotController.move_to_positions_no_correct([[position(1)+vec(1), position(2)+vec(2), obj.UP_level,obj.grip_outwards ]]);
+                             
+        end
         
     end
 end
