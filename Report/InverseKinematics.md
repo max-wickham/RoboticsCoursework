@@ -6,20 +6,24 @@ In order to build a kinematic model of the robotic arm it was necessary to start
 
 - $a_i = \mbox{the distance from } \hat{Z}_i  \mbox{ to } \hat{Z}_{i+1} \mbox{ measured along } \hat{X}_i$
 - $\alpha_i = \mbox{the angle from } \hat{Z}_i  \mbox{ to } \hat{Z}_{i+1} \mbox{ measured about } \hat{X}_i$
-- $d_i = \mbox{the distance from } \hat{X}_{i-1}  \mbox{ to } \hat{Z}_{i} \mbox{ measured along } \hat{Z}_i$
-- $\theta_i = \mbox{the angle from } \hat{X}_{i-1}  \mbox{ to } \hat{Z}_{i} \mbox{ measured about } \hat{Z}_i$
+- $d_i = \mbox{the distance from } \hat{X}_{i-1}  \mbox{ to } \hat{X}_{i} \mbox{ measured along } \hat{Z}_i$
+- $\theta_i = \mbox{the angle from } \hat{X}_{i-1}  \mbox{ to } \hat{X}_{i} \mbox{ measured about } \hat{Z}_i$
 
-Using these rules table REF was constructed for the robotic arm with the linkages and axis used labelled in the diagram in figure REF.
+Using these rules table REF was constructed for the robotic arm with the linkages and axis used labelled in the diagram in figure REF. It was decided that the direction the robot is facing should be the positive $x$ direction. This choice was not necessary as since the first linkage has no arm length the x and y direction could easily have been placed in any frame, with this one being chosen however to make the coordinate space line up with the physical grid in front of the robot. The second coordinate frame was chosen to give a value of $\alpha_1$ of $90\degree$ instead of $-90\degree$, again this choice was arbitrary and only chosen for the sake of cleanliness. The $z$ axis for all the subsequent linkages was chosen to be in the same direction as the second linkage as this simplifies the overall transform. 
+
+A final linkage is added to the robot with values of $0$ for all DH parameters. This is necessary as the matrix used for the DH transform uses a value of $a_{i-1}$ in the matrix for a given frame meaning an extra frame is needed in order for $a_3$ to be included. The overall transform we are trying to find is from the frame of the $0$ linkage to this final frame. This extra linkage shares its coordinate frame with that of the 3rd linkage and is simply a translation along the x axis from that linkage. 
+
+![image-20220323160201034](/home/max/.config/Typora/typora-user-images/image-20220323160201034.png)
 
 
 
-| Linkage | $a$   | $\alpha$    | $d$   |
-| ------- | ----- | ----------- | ----- |
-| 0       | $0$   | $90\degree$ | $0$   |
-| 1       | $A_1$ | $0$         | $D_1$ |
-| 2       | $A_2$ | $0$         | $0$   |
-| 3       | $A_3$ | $0$         | $0$   |
-| 4       | $0$   | $0$         | $0$   |
+| Linkage | $a$   | $\alpha$    | $d$   | $\theta$     |
+| ------- | ----- | ----------- | ----- | ------------ |
+| 0       | $0$   | $90\degree$ | $0$   | $\theta_{0}$ |
+| 1       | $A_1$ | $0$         | $D_1$ | $\theta_{1}$ |
+| 2       | $A_2$ | $0$         | $0$   | $\theta_{2}$ |
+| 3       | $A_3$ | $0$         | $0$   | $\theta_{3}$ |
+| 4       | $0$   | $0$         | $0$   | 0            |
 
 Once these parameters had been decided on a matrix could be constructed for each of the linkages by using the general matrix given in the lectures shown in figure REF.
 $$
@@ -63,9 +67,9 @@ M_0M_1 = \begin{bmatrix}
 	0 & 0 & 0 & 1 \\
 \end{bmatrix} \\
 M_0M_1M_2 = \begin{bmatrix} 
-	C0C12 & -C0S12 & S0 & C0C1A_1) \\
-	S0C12 & -S0S12 & -C0 & S0C1A_1)\\
-	S12 & C12 & 0 & S1A_1+D_1 \\
+	C0C12 & -C0S12 & S0 & 0) \\
+	S0C12 & -S0S12 & -C0 & 0)\\
+	S12 & C12 & 0 & D_1 \\
 	0 & 0 & 0 & 1 \\
 \end{bmatrix} \\
 M_0M_1M_2M_3 = \begin{bmatrix} 
